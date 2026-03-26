@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Cherry+Bomb+One&display=swap" rel="stylesheet">
 <style>
 :root{
   --pink:#FFB7C5;--pink-d:#FF8FAB;--pink-l:#FFE4EC;
@@ -33,33 +33,34 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 
 /* HERO */
 .hero-bg{
-  background:linear-gradient(160deg,#FFB7C5 0%,#FFCBA4 40%,#C9B8F5 100%);
-  position:relative;overflow:hidden;padding:20px 16px 16px;
-  min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center
+  position:relative;overflow:hidden;
+  height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background-image:url('https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=1200&q=80');
+  background-size:cover;background-position:center;
 }
 .hero-bg::before{
-  content:'';position:absolute;inset:0;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='10' cy='10' r='3' fill='white' opacity='.15'/%3E%3Ccircle cx='40' cy='25' r='5' fill='white' opacity='.1'/%3E%3Ccircle cx='55' cy='50' r='2' fill='white' opacity='.2'/%3E%3Ccircle cx='25' cy='45' r='4' fill='white' opacity='.1'/%3E%3C/svg%3E") repeat;
+  content:'';position:absolute;inset:0;background:rgba(0,0,0,.28);z-index:0
 }
-.sakura-float{position:absolute;font-size:18px;opacity:.3;animation:floatSakura linear infinite}
-@keyframes floatSakura{0%{transform:translateY(-20px) rotate(0deg);opacity:.3}100%{transform:translateY(220px) rotate(360deg);opacity:0}}
-.hero-title{font-family:'M PLUS Rounded 1c',sans-serif;font-weight:900;font-size:1.25rem;color:#fff;text-shadow:0 2px 8px rgba(180,80,120,.4);position:relative;z-index:1;text-align:center;letter-spacing:.05em;line-height:1.3}
-.hero-sub{font-size:.7rem;color:rgba(255,255,255,.85);position:relative;z-index:1;margin-top:4px;letter-spacing:.1em}
-.countdown-box{display:flex;gap:8px;margin-top:10px;position:relative;z-index:1}
-.cd-unit{background:rgba(255,255,255,.3);backdrop-filter:blur(8px);border-radius:12px;padding:4px 10px;text-align:center;min-width:52px}
-.cd-num{font-size:1.4rem;font-weight:900;color:#fff;line-height:1;display:block}
-.cd-label{font-size:.55rem;color:rgba(255,255,255,.8);letter-spacing:.05em}
+.hero-title-zh{font-family:'M PLUS Rounded 1c',sans-serif;font-weight:900;font-size:2rem;color:#fff;position:relative;z-index:1;text-align:center;letter-spacing:.08em;line-height:1.2;text-shadow:2px 2px 0px #E60012,-1px -1px 0px #FFD700}
+.hero-title-en{font-family:'Cherry Bomb One',cursive;font-size:2.4rem;color:#fff;position:relative;z-index:1;text-align:center;letter-spacing:.05em;text-shadow:2px 2px 0px #E60012,-1px -1px 0px #FFD700;margin-top:4px}
+.hero-sub{font-size:.75rem;color:rgba(255,255,255,.9);position:relative;z-index:1;margin-top:6px;letter-spacing:.12em}
+.countdown-box{display:inline-flex;gap:6px;margin-top:14px;position:relative;z-index:1;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-radius:20px;border:2px solid #FFD70088;padding:8px 16px;align-items:center}
+.cd-plane{font-size:1.2rem;animation:flyPlane 3s ease-in-out infinite;display:inline-block;margin-right:4px}
+@keyframes flyPlane{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(3px,-3px) rotate(5deg)}50%{transform:translate(0,0) rotate(0deg)}75%{transform:translate(-3px,3px) rotate(-5deg)}100%{transform:translate(0,0) rotate(0deg)}}
+.cd-text{font-size:.9rem;font-weight:900;color:#E60012;font-family:'M PLUS Rounded 1c',sans-serif}
+.sakura-float{position:absolute;font-size:18px;opacity:.35;animation:floatSakura linear infinite;z-index:1}
+@keyframes floatSakura{0%{transform:translateY(-20px) rotate(0deg);opacity:.35}100%{transform:translateY(360px) rotate(360deg);opacity:0}}
 
 /* TABS */
 .tab-btn{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:8px 0;flex:1;cursor:pointer;position:relative;transition:.2s;
-  font-size:.55rem;font-weight:700;letter-spacing:.03em;color:var(--text-s);
+  padding:10px 0;flex:1;cursor:pointer;position:relative;transition:.2s;
+  font-size:.62rem;font-weight:800;letter-spacing:.03em;color:var(--text-s);
   background:none;border:none;font-family:'M PLUS Rounded 1c',sans-serif
 }
 .tab-btn.active{color:var(--pink-d)}
-.tab-btn .tab-icon{font-size:1.1rem;margin-bottom:2px}
-.tab-btn.active::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:3px;background:var(--pink-d);border-radius:0 0 4px 4px}
+.tab-btn .tab-icon{font-size:1.35rem;margin-bottom:3px}
+.tab-btn.active::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:36px;height:3px;background:var(--pink-d);border-radius:0 0 4px 4px}
 .nav-bg{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid rgba(255,183,197,.3);box-shadow:0 -4px 20px rgba(255,143,171,.1)}
 
 /* CARDS */
@@ -160,17 +161,17 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
   <div id="hero">
     <div class="hero-bg">
       <span class="sakura-float" style="left:5%;animation-duration:6s;animation-delay:0s">🌸</span>
-      <span class="sakura-float" style="left:20%;animation-duration:8s;animation-delay:1s">🌸</span>
-      <span class="sakura-float" style="left:45%;animation-duration:7s;animation-delay:2s">🌸</span>
-      <span class="sakura-float" style="left:70%;animation-duration:9s;animation-delay:.5s">🌸</span>
-      <span class="sakura-float" style="left:85%;animation-duration:6.5s;animation-delay:3s">🌸</span>
-      <div class="hero-title">🌸 大阪週年屁屁遊 🌸<br>OH!Saka 2026 💕</div>
+      <span class="sakura-float" style="left:18%;animation-duration:8s;animation-delay:1s">🌸</span>
+      <span class="sakura-float" style="left:38%;animation-duration:7s;animation-delay:2s">🌸</span>
+      <span class="sakura-float" style="left:62%;animation-duration:9s;animation-delay:.5s">🌸</span>
+      <span class="sakura-float" style="left:80%;animation-duration:6.5s;animation-delay:3s">🌸</span>
+      <span class="sakura-float" style="left:92%;animation-duration:7.5s;animation-delay:1.5s">🌸</span>
+      <div class="hero-title-zh">大阪週年屁屁遊</div>
+      <div class="hero-title-en">OH!Saka 2026</div>
       <div class="hero-sub">2026.04.22 — 2026.04.27 ✈️</div>
       <div class="countdown-box" id="countdown">
-        <div class="cd-unit"><span class="cd-num" id="cd-d">--</span><span class="cd-label">DAYS</span></div>
-        <div class="cd-unit"><span class="cd-num" id="cd-h">--</span><span class="cd-label">HRS</span></div>
-        <div class="cd-unit"><span class="cd-num" id="cd-m">--</span><span class="cd-label">MIN</span></div>
-        <div class="cd-unit"><span class="cd-num" id="cd-s">--</span><span class="cd-label">SEC</span></div>
+        <span class="cd-plane">✈️</span>
+        <div class="cd-text">倒數 <span id="cd-d">--</span> 天 <span id="cd-h">--</span> 小時 <span id="cd-m">--</span> 分鐘</div>
       </div>
     </div>
   </div>
@@ -194,7 +195,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
             <div style="font-size:.6rem;color:var(--text-s)">桃園 TPE</div>
           </div>
           <div style="flex:1;display:flex;flex-direction:column;align-items:center">
-            <div style="font-size:.6rem;color:var(--text-s);margin-bottom:2px">捷星 GK54</div>
+            <a href="https://www.flightradar24.com/GK54/" target="_blank" style="font-size:.6rem;color:var(--lav-d);font-weight:700;margin-bottom:2px;text-decoration:none;display:flex;align-items:center;gap:3px"><i class="fas fa-satellite-dish" style="font-size:.55rem"></i> 捷星 GK54</a>
             <div style="height:2px;background:linear-gradient(90deg,var(--lav-d),var(--pink-d));width:100%;border-radius:1px;position:relative">
               <span style="position:absolute;right:0;top:-8px;font-size:.9rem">✈️</span>
             </div>
@@ -217,7 +218,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
             <div style="font-size:.6rem;color:var(--text-s)">關西 KIX</div>
           </div>
           <div style="flex:1;display:flex;flex-direction:column;align-items:center">
-            <div style="font-size:.6rem;color:var(--text-s);margin-bottom:2px">樂桃 MM27</div>
+            <a href="https://www.flightradar24.com/MM27/" target="_blank" style="font-size:.6rem;color:var(--pink-d);font-weight:700;margin-bottom:2px;text-decoration:none;display:flex;align-items:center;gap:3px"><i class="fas fa-satellite-dish" style="font-size:.55rem"></i> 樂桃 MM27</a>
             <div style="height:2px;background:linear-gradient(90deg,var(--pink-d),var(--lav-d));width:100%;border-radius:1px;position:relative">
               <span style="position:absolute;right:0;top:-8px;font-size:.9rem">✈️</span>
             </div>
@@ -580,7 +581,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 
     <!-- ======== PAGE: TRANSPORT ======== -->
     <div id="page-transport" class="page">
-      <div class="sec-title">大阪交通</div>
+      <div class="sec-title">🚇 TRANSIT</div>
 
       <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none">
         <button class="sub-tab active" onclick="showTransport('subway',this)">地鐵路線圖</button>
@@ -590,7 +591,16 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 
       <div id="transport-subway">
         <div style="font-size:.75rem;color:var(--text-s);margin-bottom:8px">大阪地下鐵路線圖（可縮放）</div>
-        <div style="border-radius:14px;overflow:hidden;height:60vh;border:2px solid var(--pink-l)">
+        <!-- Official route map links -->
+        <div style="display:flex;gap:6px;margin-bottom:10px">
+          <a href="https://subway.osakametro.co.jp/img/osakametro_rosenzu_20250404.pdf" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;background:linear-gradient(135deg,#C9B8F5,#A78BDE);color:#fff;border-radius:10px;padding:8px 6px;font-size:.68rem;font-weight:800;text-decoration:none">
+            <i class="fas fa-map" style="font-size:.75rem"></i> 官方地鐵圖 PDF
+          </a>
+          <a href="https://subway.osakametro.co.jp/en/guide/routemap.php" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;background:linear-gradient(135deg,#B5EAD7,#7DD3B5);color:#fff;border-radius:10px;padding:8px 6px;font-size:.68rem;font-weight:800;text-decoration:none">
+            <i class="fas fa-external-link-alt" style="font-size:.75rem"></i> Osaka Metro 官網
+          </a>
+        </div>
+        <div style="border-radius:14px;overflow:hidden;height:55vh;border:2px solid var(--pink-l)">
           <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=135.4500%2C34.6200%2C135.5200%2C34.7200&layer=mapnik" style="width:100%;height:100%;border:0" loading="lazy"></iframe>
         </div>
         <a href="https://www.google.com/maps/search/大阪地下鉄" target="_blank" class="btn-pink" style="margin-top:8px;font-size:.7rem;padding:8px 14px;width:100%;justify-content:center">
@@ -600,7 +610,16 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 
       <div id="transport-jr" style="display:none">
         <div style="font-size:.75rem;color:var(--text-s);margin-bottom:8px">關西JR路線圖（可縮放）</div>
-        <div style="border-radius:14px;overflow:hidden;height:60vh;border:2px solid var(--lav)">
+        <!-- Official route map links -->
+        <div style="display:flex;gap:6px;margin-bottom:10px">
+          <a href="https://www.jr-odekake.net/railroad/view_map.html" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;background:linear-gradient(135deg,#C9B8F5,#A78BDE);color:#fff;border-radius:10px;padding:8px 6px;font-size:.68rem;font-weight:800;text-decoration:none">
+            <i class="fas fa-map" style="font-size:.75rem"></i> 官方JR路線圖
+          </a>
+          <a href="https://www.jr-odekake.net/eki/pdf/ubn.pdf" target="_blank" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;background:linear-gradient(135deg,#FFCBA4,#FFB07A);color:#fff;border-radius:10px;padding:8px 6px;font-size:.68rem;font-weight:800;text-decoration:none">
+            <i class="fas fa-file-pdf" style="font-size:.75rem"></i> JR大阪路線 PDF
+          </a>
+        </div>
+        <div style="border-radius:14px;overflow:hidden;height:55vh;border:2px solid var(--lav)">
           <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=135.2000%2C34.5000%2C135.7000%2C35.1000&layer=mapnik" style="width:100%;height:100%;border:0" loading="lazy"></iframe>
         </div>
         <a href="https://transit.yahoo.co.jp/" target="_blank" class="btn-lav" style="margin-top:8px;font-size:.7rem;padding:8px 14px;width:100%;justify-content:center">
@@ -630,14 +649,14 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
       <div class="sec-title">💰 匯率換算 & 記帳</div>
 
       <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none">
-        <button class="sub-tab active" onclick="showWallet('calc',this)">匯率計算機</button>
-        <button class="sub-tab" onclick="showWallet('add',this)">新增支出</button>
+        <button class="sub-tab active" onclick="showWallet('add',this)">新增支出</button>
         <button class="sub-tab" onclick="showWallet('list',this)">帳本</button>
         <button class="sub-tab" onclick="showWallet('summary',this)">花費結算</button>
+        <button class="sub-tab" onclick="showWallet('calc',this)">匯率計算機</button>
       </div>
 
       <!-- Calculator -->
-      <div id="wallet-calc">
+      <div id="wallet-calc" style="display:none">
         <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
             <span style="font-size:.75rem;font-weight:800;color:var(--text-s)">當前匯率 (JPY → TWD)</span>
@@ -675,7 +694,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
       </div>
 
       <!-- Add Expense -->
-      <div id="wallet-add" style="display:none">
+      <div id="wallet-add">
         <div class="card">
           <div style="font-size:.8rem;font-weight:800;margin-bottom:12px;color:var(--pink-d)">✏️ 新增支出</div>
           <div style="margin-bottom:10px">
@@ -835,10 +854,10 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 
     <!-- ======== PAGE: MEMORIES ======== -->
     <div id="page-memories" class="page">
-      <div class="sec-title">📸 旅行回憶</div>
+      <div class="sec-title">📸 MEMORY</div>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div style="font-size:.8rem;font-weight:800;color:var(--pink-d)">我們的旅行相簿 💕</div>
+          <div style="font-size:.8rem;font-weight:800;color:var(--pink-d)">我們的旅行相簿 💕<div style="font-size:.62rem;font-weight:400;color:var(--text-s);margin-top:2px">上傳照片後可為每張照片加上文字描述</div></div>
           <button onclick="document.getElementById('mem-photo-input').click()" class="btn-pink" style="font-size:.65rem;padding:6px 10px">
             <i class="fas fa-camera"></i> 上傳
           </button>
@@ -856,27 +875,27 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 
   <!-- ===== BOTTOM NAV ===== -->
   <div id="bottom-nav">
-    <div class="nav-bg" style="display:flex;padding:4px 0 calc(4px + env(safe-area-inset-bottom))">
+    <div class="nav-bg" style="display:flex;padding:6px 0 calc(6px + env(safe-area-inset-bottom))">
       <button class="tab-btn active" id="nav-plan" onclick="showPage('plan')">
-        <span class="tab-icon">🗓️</span>PLAN
+        <span class="tab-icon">🗓️</span>行程
       </button>
       <button class="tab-btn" id="nav-guide" onclick="showPage('guide')">
-        <span class="tab-icon">🗺️</span>GUIDE
+        <span class="tab-icon">🗺️</span>導覽
       </button>
       <button class="tab-btn" id="nav-usj" onclick="showPage('usj')">
-        <span class="tab-icon">🎢</span>USJ
+        <span class="tab-icon">🎢</span>環球
       </button>
       <button class="tab-btn" id="nav-transport" onclick="showPage('transport')">
         <span class="tab-icon">🚇</span>交通
       </button>
       <button class="tab-btn" id="nav-wallet" onclick="showPage('wallet')">
-        <span class="tab-icon">💰</span>WALLET
+        <span class="tab-icon">💰</span>記帳
       </button>
       <button class="tab-btn" id="nav-lists" onclick="showPage('lists')">
-        <span class="tab-icon">📋</span>LISTS
+        <span class="tab-icon">📋</span>清單
       </button>
       <button class="tab-btn" id="nav-info" onclick="showPage('info')">
-        <span class="tab-icon">ℹ️</span>INFO
+        <span class="tab-icon">ℹ️</span>資訊
       </button>
       <button class="tab-btn" id="nav-memories" onclick="showPage('memories')">
         <span class="tab-icon">📸</span>回憶
@@ -899,7 +918,7 @@ const ITINERARY = [
     day:1, date:'4/22 (三)', title:'抵達大阪',
     sub:'機場 → 天下茶屋 → 採購', color:'#C9B8F5',
     events:[
-      {time:'18:20', icon:'✈️', name:'捷星 GK54 起飛', detail:'桃園 TPE → 關西 KIX', maps:''},
+      {time:'18:20', icon:'✈️', name:'捷星 GK54 起飛', detail:'桃園 TPE → 關西 KIX', maps:'', flightTrack:'https://www.flightradar24.com/GK54/'},
       {time:'22:00', icon:'🛬', name:'抵達關西機場', detail:'', maps:'https://maps.google.com/?q=Kansai+International+Airport'},
       {time:'22:30', icon:'🚃', name:'南海電鐵 空港急行', detail:'關西機場 → 天下茶屋（¥970，約44分）', maps:''},
       {time:'23:15', icon:'🏠', name:'抵達飯店 Check-in', detail:'嵐飯店天下茶屋 No.005', maps:'https://maps.google.com/?q=大阪市西成区天下茶屋北2-5-5'},
@@ -990,7 +1009,7 @@ const ITINERARY = [
       {time:'12:50', icon:'🛫', name:'抵達關西機場 T2 航廈', detail:'⚠️ 樂桃在第2航廈（T2）！與T1距離較遠', maps:'https://maps.google.com/?q=Kansai+International+Airport'},
       {time:'13:00', icon:'📋', name:'樂桃 Check-in + 安檢', detail:'辦理行李托運，出關後可逛免稅店', maps:''},
       {time:'13:30', icon:'🍱', name:'機場午餐', detail:'A. 機場食堂（拉麵/烏龍麵）  B. 便利商店便當  C. 零食零食！', maps:''},
-      {time:'15:15', icon:'✈️', name:'樂桃 MM27 起飛！', detail:'關西 KIX → 桃園 TPE  15:15→17:30', maps:''},
+      {time:'15:15', icon:'✈️', name:'樂桃 MM27 起飛！', detail:'關西 KIX → 桃園 TPE  15:15→17:30', maps:'', flightTrack:'https://www.flightradar24.com/MM27/'},
       {time:'17:30', icon:'🏠', name:'抵達桃園，平安回台！', detail:'行程圓滿結束 💕', maps:''},
     ]
   }
@@ -1045,21 +1064,18 @@ function updateCountdown(){
   const diff = target - now;
   if(diff<=0){
     document.getElementById('cd-d').textContent='🌸';
-    document.getElementById('cd-h').textContent='出';
-    document.getElementById('cd-m').textContent='發';
-    document.getElementById('cd-s').textContent='囉';
+    document.getElementById('cd-h').textContent='出發';
+    document.getElementById('cd-m').textContent='囉';
     return;
   }
   const d = Math.floor(diff/86400000);
   const h = Math.floor((diff%86400000)/3600000);
   const m = Math.floor((diff%3600000)/60000);
-  const s = Math.floor((diff%60000)/1000);
   document.getElementById('cd-d').textContent=d;
   document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
   document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
-  document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
 }
-setInterval(updateCountdown,1000);
+setInterval(updateCountdown,60000);
 updateCountdown();
 
 // ===== PAGE NAV =====
@@ -1084,37 +1100,121 @@ function showDay(d, btn){
   renderDay(d);
 }
 
+function saveItinerary(){
+  localStorage.setItem('osaka_itinerary', JSON.stringify(ITINERARY));
+}
+
+function addEvent(dayIdx){
+  ITINERARY[dayIdx].events.push({time:'--:--', icon:'📌', name:'新增行程項目', detail:'', maps:''});
+  saveItinerary();
+  renderDay(dayIdx+1);
+}
+
+function deleteEvent(dayIdx, evIdx){
+  if(!confirm('確定刪除這個行程項目？')) return;
+  ITINERARY[dayIdx].events.splice(evIdx, 1);
+  saveItinerary();
+  renderDay(dayIdx+1);
+}
+
+function editEventField(dayIdx, evIdx, field, el){
+  ITINERARY[dayIdx].events[evIdx][field] = el.innerText.trim();
+  saveItinerary();
+}
+
+function editDayField(dayIdx, field, el){
+  ITINERARY[dayIdx][field] = el.innerText.trim();
+  saveItinerary();
+}
+
+function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
 function renderDay(d){
   const day = ITINERARY[d-1];
+  const di = d-1;
   const container = document.getElementById('day-content');
-  const textColor = ['#fff','#fff','#fff','#fff','#fff','#fff'][d-1];
+  const icons = ['🛬','🎢','🐟','⛩️','🗼','✈️'];
   let html = `<div class="card bounce-in" style="background:linear-gradient(135deg,${day.color}22,${day.color}11);border:1.5px solid ${day.color}44">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <div>
-        <div style="font-size:.75rem;color:var(--text-s)">${day.date}</div>
-        <div style="font-size:1rem;font-weight:900;color:var(--text)">${day.title}</div>
-        <div style="font-size:.7rem;color:var(--text-s)">${day.sub}</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.75rem;color:var(--text-s)">${escH(day.date)}</div>
+        <div contenteditable="true"
+          onblur="editDayField(${di},'title',this)"
+          style="font-size:1rem;font-weight:900;color:var(--text);outline:none;border-bottom:1.5px dashed transparent;transition:.15s"
+          onfocus="this.style.borderBottomColor='var(--pink-d)'"
+          >${escH(day.title)}</div>
+        <div contenteditable="true"
+          onblur="editDayField(${di},'sub',this)"
+          style="font-size:.7rem;color:var(--text-s);outline:none;border-bottom:1px dashed transparent;transition:.15s"
+          onfocus="this.style.borderBottomColor='var(--pink-d)'"
+          >${escH(day.sub)}</div>
       </div>
-      <div style="width:40px;height:40px;background:${day.color};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">${['🛬','🎢','🐟','⛩️','🗼','✈️'][d-1]}</div>
-    </div>`;
-  
-  day.events.forEach((ev,i)=>{
+      <div style="width:40px;height:40px;background:${day.color};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;margin-left:8px">${icons[di]}</div>
+    </div>
+    <div style="font-size:.6rem;color:var(--text-s);margin-bottom:8px;opacity:.65;display:flex;align-items:center;gap:4px"><i class="fas fa-pen" style="font-size:.55rem"></i> 點擊任何文字可直接編輯，垃圾桶可刪除</div>`;
+
+  day.events.forEach((ev, i)=>{
     const isLast = i===day.events.length-1;
-    html+=`<div style="display:flex;gap:8px;padding:6px 0;${!isLast?'border-bottom:1px dashed rgba(0,0,0,.06)':''}">
-      <div style="min-width:46px;text-align:right">
-        <span class="time-badge">${ev.time}</span>
+    html+=`<div style="display:flex;gap:8px;padding:8px 0;${!isLast?'border-bottom:1px dashed rgba(0,0,0,.06)':''}">
+      <div style="min-width:50px;text-align:right;flex-shrink:0;padding-top:2px">
+        <span contenteditable="true"
+          onblur="editEventField(${di},${i},'time',this)"
+          class="time-badge"
+          style="cursor:text;outline:none;display:inline-block"
+          >${escH(ev.time)}</span>
       </div>
-      <div style="font-size:1rem;flex-shrink:0">${ev.icon}</div>
-      <div style="flex:1">
-        <div style="font-size:.82rem;font-weight:700;color:var(--text)">${ev.name}</div>
-        <div style="font-size:.68rem;color:var(--text-s);margin-top:2px;line-height:1.5;white-space:pre-line">${ev.detail}</div>
+      <div contenteditable="true"
+        onblur="editEventField(${di},${i},'icon',this)"
+        style="font-size:1rem;flex-shrink:0;outline:none;cursor:text;min-width:22px;padding-top:1px"
+        >${escH(ev.icon)}</div>
+      <div style="flex:1;min-width:0">
+        <div contenteditable="true"
+          onblur="editEventField(${di},${i},'name',this)"
+          style="font-size:.82rem;font-weight:700;color:var(--text);outline:none;border-bottom:1px dashed transparent;transition:.15s"
+          onfocus="this.style.borderBottomColor='var(--pink-d)'"
+          >${escH(ev.name)}</div>
+        <div contenteditable="true"
+          onblur="editEventField(${di},${i},'detail',this)"
+          style="font-size:.68rem;color:var(--text-s);margin-top:2px;line-height:1.55;outline:none;white-space:pre-wrap;border-bottom:1px dashed transparent;transition:.15s"
+          onfocus="this.style.borderBottomColor='var(--pink-d)'"
+          >${escH(ev.detail)}</div>
         ${ev.maps?`<a href="${ev.maps}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:.62rem;color:var(--pink-d);font-weight:700;margin-top:4px;text-decoration:none;background:var(--pink-l);padding:2px 8px;border-radius:8px"><i class="fas fa-map-marker-alt"></i> Maps</a>`:''}
+        ${ev.flightTrack?`<a href="${ev.flightTrack}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:.62rem;color:#1a6bbd;font-weight:700;margin-top:4px;margin-left:4px;text-decoration:none;background:#dbeafe;padding:2px 8px;border-radius:8px"><i class="fas fa-satellite-dish"></i> 追蹤航班</a>`:''}
       </div>
+      <button onclick="deleteEvent(${di},${i})"
+        style="background:none;border:none;color:#e0c0c8;font-size:.72rem;cursor:pointer;flex-shrink:0;padding:2px 3px;align-self:flex-start;transition:.15s"
+        onmouseover="this.style.color='#e05070'"
+        onmouseout="this.style.color='#e0c0c8'"
+        title="刪除此項目"><i class="fas fa-trash-alt"></i></button>
     </div>`;
   });
+
+  html+=`<button onclick="addEvent(${di})"
+    style="width:100%;margin-top:10px;padding:9px;border:2px dashed var(--pink-l);border-radius:12px;background:none;color:var(--pink-d);font-size:.75rem;font-weight:800;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s"
+    onmouseover="this.style.background='var(--pink-l)'"
+    onmouseout="this.style.background='none'">
+    <i class="fas fa-plus-circle"></i> 新增行程項目
+  </button>`;
   html+='</div>';
   container.innerHTML=html;
 }
+
+// Load saved itinerary edits from localStorage
+(function(){
+  const saved = localStorage.getItem('osaka_itinerary');
+  if(saved){
+    try{
+      const parsed = JSON.parse(saved);
+      parsed.forEach((day, i)=>{
+        if(!ITINERARY[i]) return;
+        if(day.title) ITINERARY[i].title = day.title;
+        if(day.sub)   ITINERARY[i].sub   = day.sub;
+        if(Array.isArray(day.events)) ITINERARY[i].events = day.events;
+      });
+    }catch(e){}
+  }
+})();
+
 renderDay(1);
 
 // ===== USJ SUBTABS =====
@@ -1467,7 +1567,7 @@ function handleMemoryUpload(event){
   let processed=0;
   files.forEach(file=>{
     compressImage(file,600,600,0.7,function(b64){
-      memories.push({id:Date.now()+Math.random(),data:b64,date:new Date().toLocaleDateString('zh-TW')});
+      memories.push({id:Date.now()+Math.random(),data:b64,date:new Date().toLocaleDateString('zh-TW'),caption:''});
       processed++;
       if(processed===files.length){
         saveMemories();
@@ -1484,6 +1584,11 @@ function deleteMemory(id){
   renderMemories();
 }
 
+function updateCaption(id, text){
+  const m = memories.find(x=>x.id===id);
+  if(m){ m.caption=text; saveMemories(); }
+}
+
 function renderMemories(){
   const grid=document.getElementById('memory-grid');
   const empty=document.getElementById('memory-empty');
@@ -1493,10 +1598,25 @@ function renderMemories(){
     return;
   }
   empty.style.display='none';
+  // Switch to single-column list view to accommodate captions
+  grid.style.gridTemplateColumns='1fr';
   grid.innerHTML=memories.slice().reverse().map(m=>`
-    <div style="position:relative">
-      <img src="${m.data}" class="memory-img" onclick="viewImg('${m.data}')" loading="lazy">
-      <button onclick="deleteMemory(${m.id})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.5);border:none;border-radius:50%;width:20px;height:20px;color:#fff;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(255,143,171,.1);border:1px solid var(--pink-l);margin-bottom:2px">
+      <div style="position:relative">
+        <img src="${m.data}" style="width:100%;max-height:220px;object-fit:cover;cursor:pointer;display:block" onclick="viewImg('${m.data}')" loading="lazy">
+        <button onclick="deleteMemory(${m.id})" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.5);border:none;border-radius:50%;width:24px;height:24px;color:#fff;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+        <div style="position:absolute;bottom:6px;left:8px;font-size:.6rem;color:rgba(255,255,255,.8);background:rgba(0,0,0,.3);border-radius:6px;padding:2px 6px">${m.date}</div>
+      </div>
+      <div style="padding:8px 10px">
+        <div contenteditable="true"
+          onblur="updateCaption(${m.id},this.innerText.trim())"
+          style="font-size:.78rem;color:var(--text);outline:none;min-height:22px;border-bottom:1.5px dashed var(--pink-l);padding-bottom:2px;transition:.15s;line-height:1.5"
+          onfocus="this.style.borderBottomColor='var(--pink-d)'"
+          onblur="updateCaption(${m.id},this.innerText.trim());this.style.borderBottomColor='var(--pink-l)'"
+          placeholder="點此輸入描述..."
+        >${m.caption||''}</div>
+        <div style="font-size:.6rem;color:var(--text-s);margin-top:4px;opacity:.6"><i class="fas fa-pen" style="font-size:.5rem"></i> 點擊可編輯描述</div>
+      </div>
     </div>
   `).join('');
 }
