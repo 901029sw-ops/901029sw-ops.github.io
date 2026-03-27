@@ -28,7 +28,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 /* LAYOUT */
 #app{display:flex;flex-direction:column;height:100vh;height:100dvh}
 #hero{position:relative;flex-shrink:0}
-#main-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:110px}
+#main-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:125px}
 #bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:50}
 
 /* HERO */
@@ -64,12 +64,11 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 .nav-inner{
   display:flex;
   align-items:stretch;
-  /* horizontal safe area keeps icons away from curved corners */
   padding-left:max(env(safe-area-inset-left),2px);
   padding-right:max(env(safe-area-inset-right),2px);
-  padding-top:10px;
-  /* extra room above home indicator so icons aren't accidentally tapped */
-  padding-bottom:max(calc(env(safe-area-inset-bottom) + 12px), 20px);
+  padding-top:12px;
+  /* more gap between icons and home indicator */
+  padding-bottom:max(calc(env(safe-area-inset-bottom) + 18px), 26px);
 }
 .tab-btn{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -742,27 +741,28 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
       </div>
 
       <div class="card" style="padding:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div>
-            <div style="font-size:.8rem;font-weight:800;color:var(--pink-d)">我們的旅行相簿 💕</div>
-            <div style="font-size:.62rem;color:var(--text-s);margin-top:2px">上傳後可標記天數 &amp; 加文字描述</div>
-          </div>
-          <button onclick="document.getElementById('mem-photo-input').click()" class="btn-pink" style="font-size:.65rem;padding:6px 10px;flex-shrink:0"><i class="fas fa-camera"></i> 上傳</button>
-        </div>
+        <div style="font-size:.8rem;font-weight:800;color:var(--pink-d);margin-bottom:10px">我們的旅行相簿 💕</div>
 
-        <!-- Day picker shown after upload -->
-        <div id="mem-day-picker" style="display:none;margin-bottom:12px;background:var(--pink-l);border-radius:12px;padding:10px">
-          <div style="font-size:.75rem;font-weight:800;color:var(--pink-d);margin-bottom:6px">📅 選擇是哪一天的照片</div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px" id="mem-day-picker-btns">
-            <button class="mem-day-btn active" onclick="selectUploadDay('all',this)">不分天</button>
-            <button class="mem-day-btn" onclick="selectUploadDay('1',this)">Day 1</button>
-            <button class="mem-day-btn" onclick="selectUploadDay('2',this)">Day 2</button>
-            <button class="mem-day-btn" onclick="selectUploadDay('3',this)">Day 3</button>
-            <button class="mem-day-btn" onclick="selectUploadDay('4',this)">Day 4</button>
-            <button class="mem-day-btn" onclick="selectUploadDay('5',this)">Day 5</button>
-            <button class="mem-day-btn" onclick="selectUploadDay('6',this)">Day 6</button>
+        <!-- 先選天、再上傳 -->
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+          <div style="flex:1;position:relative">
+            <select id="mem-upload-day"
+              style="width:100%;font-size:.75rem;font-weight:800;border:1.5px solid var(--pink-l);border-radius:12px;padding:9px 30px 9px 10px;background:#fff;color:var(--text);outline:none;font-family:'M PLUS Rounded 1c',sans-serif;-webkit-appearance:none;appearance:none;cursor:pointer">
+              <option value="all">📂 不分天</option>
+              <option value="1">Day 1 · 4/22 抵達大阪</option>
+              <option value="2">Day 2 · 4/23 環球影城</option>
+              <option value="3">Day 3 · 4/24 心齋橋</option>
+              <option value="4">Day 4 · 4/25 京都</option>
+              <option value="5">Day 5 · 4/26 大阪市區</option>
+              <option value="6">Day 6 · 4/27 返程</option>
+            </select>
+            <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:.6rem;color:var(--pink-d);pointer-events:none">▼</span>
           </div>
+          <button onclick="document.getElementById('mem-photo-input').click()" class="btn-pink" style="font-size:.72rem;padding:9px 14px;flex-shrink:0;white-space:nowrap">
+            <i class="fas fa-camera"></i> 上傳
+          </button>
         </div>
+        <div style="font-size:.6rem;color:var(--text-s);margin-bottom:10px;opacity:.7">👆 先選好天數，再按上傳</div>
 
         <input type="file" id="mem-photo-input" accept="image/*" multiple style="display:none" onchange="handleMemoryUpload(event)">
         <div id="memory-list"></div>
@@ -923,8 +923,6 @@ let calcExpr = '';
 let currentDay = 1;
 let currentTicketTarget = '';
 let itineraryEditMode = false;
-let pendingMemFiles = [];   // files waiting for day assignment
-let pendingMemDay = 'all';  // day chosen in day picker
 let currentMemFilter = 'all';
 
 if(!checklist){
@@ -1160,50 +1158,25 @@ function renderMemos(){const el=document.getElementById('memo-list');if(!el)retu
 
 // ===== MEMORIES =====
 
-/* Day picker state */
-function selectUploadDay(day, btn){
-  pendingMemDay = day;
-  document.querySelectorAll('#mem-day-picker-btns .mem-day-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  // If files already pending, now commit them with chosen day
-  if(pendingMemFiles.length>0) processMemFiles();
-}
-
 function handleMemoryUpload(event){
-  pendingMemFiles = Array.from(event.target.files);
-  if(!pendingMemFiles.length) return;
+  const files=Array.from(event.target.files);
+  if(!files.length)return;
   event.target.value='';
-  // Show day picker
-  document.getElementById('mem-day-picker').style.display='block';
-  // Reset day picker to "不分天"
-  pendingMemDay='all';
-  document.querySelectorAll('#mem-day-picker-btns .mem-day-btn').forEach((b,i)=>{b.classList.toggle('active',i===0);});
-  // Auto-process after short delay if user doesn't pick
-  // (they can change day after via picker)
-  processMemFiles();
-}
-
-function processMemFiles(){
-  if(!pendingMemFiles.length)return;
+  // Read day directly from the inline selector
+  const dayTag=document.getElementById('mem-upload-day').value;
   let processed=0;
-  const files=[...pendingMemFiles];
-  const dayTag=pendingMemDay;
   files.forEach(file=>{
-    compressImage(file,500,500,0.6,function(b64){
+    compressImage(file,400,400,0.72,function(b64){
       memories.push({id:Date.now()+Math.random(),data:b64,date:new Date().toLocaleDateString('zh-TW'),caption:'',day:dayTag});
       processed++;
       if(processed===files.length){saveMemories();renderMemories();}
     });
   });
-  pendingMemFiles=[];
 }
-
-/* Re-tag existing photos via picker (called when picker btn changes after files already saved) */
-// (We just let them pick before saving; processMemFiles uses current pendingMemDay)
 
 function filterMemDay(day, btn){
   currentMemFilter=day;
-  document.querySelectorAll('.mem-day-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#mem-day-bar .mem-day-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderMemories();
 }
@@ -1245,18 +1218,46 @@ function renderMemories(){
   }
   empty.style.display='none';
 
-  list.innerHTML=filtered.map(m=>`
-    <div class="memory-card">
-      <div style="position:relative">
-        <img src="${m.data}" onclick="viewImg('${m.data}')" loading="lazy">
-        <button onclick="deleteMemory(${m.id})" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);border:none;border-radius:50%;width:26px;height:26px;color:#fff;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2">✕</button>
-        <div style="position:absolute;bottom:6px;left:8px;font-size:.6rem;color:rgba(255,255,255,.9);background:rgba(0,0,0,.35);border-radius:6px;padding:2px 7px">${m.date}</div>
+  // 3-column thumbnail grid
+  list.innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px">
+    ${filtered.map(m=>`
+      <div style="position:relative;aspect-ratio:1;overflow:hidden;border-radius:6px;cursor:pointer;background:#f0e8f0"
+           onclick="openMemDetail(${m.id})">
+        <img src="${m.data}" loading="lazy"
+             style="width:100%;height:100%;object-fit:cover;display:block;transition:opacity .15s">
+        ${m.caption?`<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));padding:10px 4px 4px;font-size:.52rem;color:#fff;line-height:1.3;word-break:break-all">${escH(m.caption)}</div>`:''}
       </div>
-      <div style="padding:8px 10px 10px">
-        <!-- Day tag selector -->
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-          <span style="font-size:.62rem;color:var(--text-s)">📅</span>
-          <select onchange="updateMemDay(${m.id},this.value)" style="font-size:.65rem;font-weight:700;border:1.5px solid var(--pink-l);border-radius:8px;padding:2px 6px;background:#fff;color:var(--text);outline:none;font-family:'M PLUS Rounded 1c',sans-serif;-webkit-appearance:none;appearance:none;cursor:pointer">
+    `).join('')}
+  </div>`;
+}
+
+/* ── 點縮圖後彈出詳細面板 ── */
+function openMemDetail(id){
+  const m=memories.find(x=>x.id===id);
+  if(!m)return;
+
+  // reuse img-modal overlay but with a richer sheet
+  const overlay=document.getElementById('img-modal');
+  overlay.innerHTML=`
+    <div onclick="event.stopPropagation()" style="background:#fff;width:100%;max-height:92vh;border-radius:24px 24px 0 0;overflow-y:auto;padding-bottom:max(env(safe-area-inset-bottom),16px)">
+      <!-- handle -->
+      <div style="width:36px;height:4px;background:#e0d0d8;border-radius:2px;margin:12px auto 0"></div>
+      <!-- image -->
+      <img src="${m.data}" style="width:100%;max-height:55vh;object-fit:contain;display:block;background:#111;margin-top:8px">
+      <!-- info -->
+      <div style="padding:12px 16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:.68rem;color:var(--text-s)">${m.date}</div>
+          <button onclick="deleteMemoryFromDetail(${m.id})"
+            style="background:var(--pink-l);border:none;border-radius:10px;padding:5px 12px;font-size:.65rem;font-weight:800;color:#c04060;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif">
+            🗑️ 刪除
+          </button>
+        </div>
+        <!-- day selector -->
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+          <span style="font-size:.68rem;color:var(--text-s);flex-shrink:0">📅 天數</span>
+          <select onchange="updateMemDay(${m.id},this.value)"
+            style="font-size:.7rem;font-weight:700;border:1.5px solid var(--pink-l);border-radius:8px;padding:4px 8px;background:#fff;color:var(--text);outline:none;font-family:'M PLUS Rounded 1c',sans-serif;-webkit-appearance:none;appearance:none;cursor:pointer;flex:1">
             <option value="all" ${m.day==='all'?'selected':''}>不分天</option>
             <option value="1" ${m.day==='1'?'selected':''}>Day 1 · 4/22</option>
             <option value="2" ${m.day==='2'?'selected':''}>Day 2 · 4/23</option>
@@ -1266,16 +1267,40 @@ function renderMemories(){
             <option value="6" ${m.day==='6'?'selected':''}>Day 6 · 4/27</option>
           </select>
         </div>
-        <!-- Caption -->
-        <div contenteditable="true"
-          onblur="updateCaption(${m.id},this.innerText.trim());this.style.borderBottomColor='var(--pink-l)'"
-          onfocus="this.style.borderBottomColor='var(--pink-d)'"
-          style="font-size:.78rem;color:var(--text);outline:none;min-height:22px;border-bottom:1.5px dashed var(--pink-l);padding-bottom:2px;transition:.15s;line-height:1.5"
+        <!-- caption -->
+        <div style="font-size:.7rem;color:var(--text-s);margin-bottom:4px">📝 描述</div>
+        <div id="detail-caption-${m.id}" contenteditable="true"
+          onblur="updateCaption(${m.id},this.innerText.trim())"
+          style="font-size:.82rem;color:var(--text);outline:none;border:1.5px solid var(--pink-l);border-radius:10px;padding:8px 10px;min-height:38px;line-height:1.6;transition:.15s"
+          onfocus="this.style.borderColor='var(--pink-d)'"
         >${m.caption||''}</div>
-        <div style="font-size:.58rem;color:var(--text-s);margin-top:4px;opacity:.55"><i class="fas fa-pen" style="font-size:.5rem"></i> 點擊可編輯描述</div>
+        <div style="font-size:.58rem;color:var(--text-s);margin-top:4px;opacity:.6"><i class="fas fa-pen" style="font-size:.5rem"></i> 點擊可編輯</div>
+        <!-- close -->
+        <button onclick="closeMemDetail()"
+          style="width:100%;margin-top:14px;padding:12px;background:var(--pink-l);border:none;border-radius:14px;font-size:.82rem;font-weight:800;color:var(--pink-d);cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif">
+          關閉
+        </button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  overlay.classList.add('open');
+  // clicking overlay background closes it
+  overlay.onclick=function(e){if(e.target===overlay)closeMemDetail();};
+}
+
+function closeMemDetail(){
+  const overlay=document.getElementById('img-modal');
+  overlay.classList.remove('open');
+  // restore original structure for viewImg
+  overlay.innerHTML=`<div onclick="event.stopPropagation()" style="background:#000;width:100%;max-height:90vh;display:flex;align-items:center;justify-content:center;border-radius:24px 24px 0 0;padding:20px"><img id="img-modal-src" style="max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain"></div>`;
+  overlay.onclick=function(){overlay.classList.remove('open');};
+  renderMemories();
+}
+
+function deleteMemoryFromDetail(id){
+  if(!confirm('確定刪除這張照片？'))return;
+  memories=memories.filter(m=>m.id!==id);
+  saveMemories();
+  closeMemDetail();
 }
 
 // ===== IMAGE VIEWER =====
