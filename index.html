@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>大阪週年屁屁遊 OH!Saka 2026</title>
-<script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +20,7 @@
   --bg:#FFF5F7;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:17px}
 html,body{height:100%;margin:0;padding:0;overflow:hidden}
 body{font-family:'M PLUS Rounded 1c','Nunito',sans-serif;background:var(--bg);color:var(--text);touch-action:pan-y}
 h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
@@ -73,26 +73,23 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 .tab-btn{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   flex:1;min-width:0;padding:6px 0;cursor:pointer;position:relative;transition:.2s;
-  font-size:.58rem;font-weight:800;letter-spacing:.02em;color:var(--text-s);
+  font-size:.65rem;font-weight:800;letter-spacing:.02em;color:var(--text-s);
   background:none;border:none;font-family:'M PLUS Rounded 1c',sans-serif;
 }
 .tab-btn.active{color:var(--pink-d)}
-.tab-btn .tab-icon{font-size:1.35rem;margin-bottom:3px;line-height:1.1;display:block}
+.tab-btn .tab-icon{font-size:1.5rem;margin-bottom:3px;line-height:1.1;display:block}
 .tab-btn .tab-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding:0 1px;display:block}
 .tab-btn.active::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:30px;height:3px;background:var(--pink-d);border-radius:0 0 4px 4px}
 
 /* CARDS */
 .card{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(255,143,171,.12);padding:16px;margin-bottom:12px}
-.card-sm{border-radius:14px;box-shadow:0 2px 12px rgba(255,143,171,.1)}
 .pill{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.03em}
 
 /* PAGE */
 .page{display:none;padding:12px 12px 0}
 .page.active{display:block}
 
-/* TIMELINE */
-.timeline-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:4px}
-.timeline-line{width:2px;background:linear-gradient(to bottom,var(--pink-l),transparent);position:absolute;left:5px;top:16px;bottom:0}
+/* TIME BADGE */
 .time-badge{font-size:.6rem;font-weight:800;color:var(--pink-d);background:var(--pink-l);padding:2px 7px;border-radius:10px;white-space:nowrap}
 
 /* SECTION HEADER */
@@ -239,6 +236,34 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 /* Dashed underlines only in edit mode */
 .day-card.edit-mode [contenteditable]:focus{border-bottom-color:var(--pink-d) !important}
 
+/* TOAST */
+#toast{
+  position:fixed;bottom:calc(var(--nav-h, 110px) + 12px);left:50%;transform:translateX(-50%) translateY(20px);
+  background:#3D2B2B;color:#fff;font-size:.8rem;font-weight:700;
+  padding:10px 20px;border-radius:20px;white-space:nowrap;
+  opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:200;
+  font-family:'M PLUS Rounded 1c',sans-serif;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.success{background:linear-gradient(135deg,#40916c,#52b788)}
+#toast.error{background:linear-gradient(135deg,#c0392b,#e74c3c)}
+#toast.warn{background:linear-gradient(135deg,#e67e22,#f39c12)}
+
+/* CONFIRM SHEET */
+#confirm-overlay{
+  position:fixed;inset:0;background:rgba(61,43,43,.45);
+  backdrop-filter:blur(4px);z-index:150;
+  display:none;align-items:flex-end;justify-content:center;
+}
+#confirm-overlay.open{display:flex}
+#confirm-sheet{
+  background:#fff;border-radius:24px 24px 0 0;
+  padding:20px 20px calc(20px + env(safe-area-inset-bottom));
+  width:100%;font-family:'M PLUS Rounded 1c',sans-serif;
+}
+
 /* SPLIT BADGE */
 .split-badge-yes{background:var(--mint);color:#1a5c43}
 .split-badge-no{background:var(--peach);color:#7a4a00}
@@ -265,7 +290,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
       <div class="hero-sub">2026.04.22 — 2026.04.27 ✈️</div>
       <div class="countdown-box" id="countdown">
         <span class="cd-plane">✈️</span>
-        <div class="cd-text">倒數 <span id="cd-d">--</span> 天 <span id="cd-h">--</span> 小時 <span id="cd-m">--</span> 分鐘</div>
+        <div class="cd-text">倒數 <span id="cd-d">--</span> 天 <span id="cd-h">--</span> 小時 <span id="cd-m">--</span> 分 <span id="cd-s">--</span> 秒</div>
       </div>
     </div>
   </div>
@@ -815,6 +840,33 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
   </div>
 </div>
 
+<!-- MEMORY DETAIL MODAL (independent from img-modal) -->
+<div class="modal-overlay" id="mem-detail-overlay">
+  <div id="mem-detail-sheet" onclick="event.stopPropagation()"
+    style="background:#fff;width:100%;max-height:92vh;border-radius:24px 24px 0 0;overflow-y:auto;padding-bottom:max(env(safe-area-inset-bottom),16px)">
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- CONFIRM SHEET -->
+<div id="confirm-overlay">
+  <div id="confirm-sheet">
+    <div id="confirm-msg" style="font-size:.9rem;font-weight:800;color:var(--text);text-align:center;margin-bottom:16px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button id="confirm-cancel"
+        style="padding:12px;background:var(--pink-l);border:none;border-radius:14px;font-size:.85rem;font-weight:800;color:var(--text-s);cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif">
+        取消
+      </button>
+      <button id="confirm-ok"
+        style="padding:12px;background:linear-gradient(135deg,#e05070,#c03050);border:none;border-radius:14px;font-size:.85rem;font-weight:800;color:#fff;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif">
+        確定刪除
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===== DATA =====
 const ITINERARY = [
@@ -930,27 +982,73 @@ if(!checklist){
   saveChecklist();
 }
 
-function saveExpenses(){localStorage.setItem('osaka_expenses',JSON.stringify(expenses));}
-function saveChecklist(){localStorage.setItem('osaka_checklist',JSON.stringify(checklist));}
-function saveMemos(){localStorage.setItem('osaka_memos',JSON.stringify(memos));}
-function saveMemories(){localStorage.setItem('osaka_memories',JSON.stringify(memories));}
-function saveTickets(){localStorage.setItem('osaka_tickets',JSON.stringify(ticketImages));}
-function saveRate(){localStorage.setItem('osaka_rate',jpyRate.toString());}
+// ===== STORAGE (with error handling) =====
+function safeSave(key, value){
+  try{
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch(e){
+    // QuotaExceededError — storage full
+    showToast('⚠️ 儲存空間不足，請先刪除一些舊照片', 'error', 4000);
+    return false;
+  }
+}
+function saveExpenses(){safeSave('osaka_expenses', expenses);}
+function saveChecklist(){safeSave('osaka_checklist', checklist);}
+function saveMemos(){safeSave('osaka_memos', memos);}
+function saveMemories(){safeSave('osaka_memories', memories);}
+function saveTickets(){safeSave('osaka_tickets', ticketImages);}
+function saveRate(){localStorage.setItem('osaka_rate', jpyRate.toString());}
+
+// ===== TOAST =====
+let _toastTimer = null;
+function showToast(msg, type='success', duration=2200){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(()=>{ el.className=''; }, duration);
+}
+
+// ===== CONFIRM SHEET (replaces confirm()) =====
+function showConfirm(msg, onOk){
+  const overlay = document.getElementById('confirm-overlay');
+  document.getElementById('confirm-msg').textContent = msg;
+  overlay.classList.add('open');
+  const ok = document.getElementById('confirm-ok');
+  const cancel = document.getElementById('confirm-cancel');
+  // clone to remove old listeners
+  const newOk = ok.cloneNode(true);
+  const newCancel = cancel.cloneNode(true);
+  ok.replaceWith(newOk);
+  cancel.replaceWith(newCancel);
+  newOk.onclick = ()=>{ overlay.classList.remove('open'); onOk(); };
+  newCancel.onclick = ()=>{ overlay.classList.remove('open'); };
+  overlay.onclick = (e)=>{ if(e.target===overlay) overlay.classList.remove('open'); };
+}
 
 // ===== COUNTDOWN =====
 function updateCountdown(){
   const target=new Date('2026-04-22T18:20:00+08:00');
   const now=new Date();
   const diff=target-now;
-  if(diff<=0){document.getElementById('cd-d').textContent='🌸';document.getElementById('cd-h').textContent='出發';document.getElementById('cd-m').textContent='囉';return;}
+  if(diff<=0){
+    document.getElementById('cd-d').textContent='🌸';
+    document.getElementById('cd-h').textContent='出發';
+    document.getElementById('cd-m').textContent='囉';
+    document.getElementById('cd-s').textContent='';
+    return;
+  }
   const d=Math.floor(diff/86400000);
   const h=Math.floor((diff%86400000)/3600000);
   const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
   document.getElementById('cd-d').textContent=d;
   document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
   document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
 }
-setInterval(updateCountdown,60000);
+setInterval(updateCountdown,1000);
 updateCountdown();
 
 // ===== PAGE NAV =====
@@ -961,7 +1059,7 @@ function showPage(p){
   document.getElementById('nav-'+p).classList.add('active');
   document.getElementById('main-content').scrollTop=0;
   currentPage=p;
-  if(p==='wallet'){renderExpenseList();renderSummary();}
+  if(p==='wallet'){fetchRate();renderExpenseList();renderSummary();}
   if(p==='lists'){renderChecklist();renderMemos();}
   if(p==='memories'){renderMemories();}
   if(p==='transport'){renderSpots();}
@@ -977,10 +1075,16 @@ function showDay(d,btn){
 }
 function saveItinerary(){localStorage.setItem('osaka_itinerary',JSON.stringify(ITINERARY));}
 function addEvent(dayIdx){ITINERARY[dayIdx].events.push({time:'--:--',icon:'📌',name:'新增行程項目',detail:'',maps:''});saveItinerary();renderDay(dayIdx+1);}
-function deleteEvent(dayIdx,evIdx){if(!confirm('確定刪除這個行程項目？'))return;ITINERARY[dayIdx].events.splice(evIdx,1);saveItinerary();renderDay(dayIdx+1);}
+function deleteEvent(dayIdx,evIdx){
+  showConfirm('確定刪除這個行程項目？', ()=>{
+    ITINERARY[dayIdx].events.splice(evIdx,1);
+    saveItinerary();
+    renderDay(dayIdx+1);
+  });
+}
 function editEventField(dayIdx,evIdx,field,el){ITINERARY[dayIdx].events[evIdx][field]=el.innerText.trim();saveItinerary();}
 function editDayField(dayIdx,field,el){ITINERARY[dayIdx][field]=el.innerText.trim();saveItinerary();}
-function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');}
 
 /* Toggle edit mode for the itinerary card */
 function toggleItineraryEdit(){
@@ -1004,47 +1108,152 @@ function toggleItineraryEdit(){
 }
 
 function renderDay(d){
-  const day=ITINERARY[d-1];const di=d-1;
+  const day=ITINERARY[d-1]; const di=d-1;
   const container=document.getElementById('day-content');
   const icons=['🛬','🎢','🐟','⛩️','🗼','✈️'];
-  // Reset edit mode when switching days
-  itineraryEditMode = false;
+  itineraryEditMode=false;
 
-  let html=`<div class="card bounce-in day-card" style="background:linear-gradient(135deg,${day.color}22,${day.color}11);border:1.5px solid ${day.color}44">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-      <div style="flex:1;min-width:0">
-        <div style="font-size:.75rem;color:var(--text-s)">${escH(day.date)}</div>
-        <div contenteditable="true" onblur="editDayField(${di},'title',this)" style="font-size:1rem;font-weight:900;color:var(--text);outline:none;border-bottom:1.5px dashed transparent;transition:.15s">${escH(day.title)}</div>
-        <div contenteditable="true" onblur="editDayField(${di},'sub',this)" style="font-size:.7rem;color:var(--text-s);outline:none;border-bottom:1px dashed transparent;transition:.15s">${escH(day.sub)}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px">
-        <button id="itinerary-edit-btn" class="edit-btn" onclick="toggleItineraryEdit()">
-          <i class="fas fa-pen"></i> 編輯
-        </button>
-        <div style="width:36px;height:36px;background:${day.color};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem">${icons[di]}</div>
-      </div>
-    </div>
-    <div class="edit-hint" style="font-size:.6rem;color:var(--text-s);margin-bottom:8px;opacity:.65;align-items:center;gap:4px"><i class="fas fa-pen" style="font-size:.55rem"></i> 點擊任何文字可編輯，垃圾桶可刪除</div>`;
+  // ── outer card ──
+  const card=document.createElement('div');
+  card.className='card bounce-in day-card';
+  card.style.cssText=`background:linear-gradient(135deg,${day.color}22,${day.color}11);border:1.5px solid ${day.color}44`;
 
+  // ── card header ──
+  const header=document.createElement('div');
+  header.style.cssText='display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px';
+
+  const titleBlock=document.createElement('div');
+  titleBlock.style.cssText='flex:1;min-width:0';
+
+  const dateEl=document.createElement('div');
+  dateEl.style.cssText='font-size:.75rem;color:var(--text-s)';
+  dateEl.textContent=day.date;
+
+  const titleEl=document.createElement('div');
+  titleEl.contentEditable='true';
+  titleEl.style.cssText='font-size:1rem;font-weight:900;color:var(--text);outline:none;border-bottom:1.5px dashed transparent;transition:.15s';
+  titleEl.textContent=day.title;
+  titleEl.addEventListener('focus',()=>titleEl.style.borderBottomColor='var(--pink-d)');
+  titleEl.addEventListener('blur',()=>{ titleEl.style.borderBottomColor='transparent'; editDayField(di,'title',titleEl); });
+
+  const subEl=document.createElement('div');
+  subEl.contentEditable='true';
+  subEl.style.cssText='font-size:.7rem;color:var(--text-s);outline:none;border-bottom:1px dashed transparent;transition:.15s';
+  subEl.textContent=day.sub;
+  subEl.addEventListener('focus',()=>subEl.style.borderBottomColor='var(--pink-d)');
+  subEl.addEventListener('blur',()=>{ subEl.style.borderBottomColor='transparent'; editDayField(di,'sub',subEl); });
+
+  titleBlock.append(dateEl,titleEl,subEl);
+
+  const btnGroup=document.createElement('div');
+  btnGroup.style.cssText='display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px';
+
+  const editBtn=document.createElement('button');
+  editBtn.id='itinerary-edit-btn';
+  editBtn.className='edit-btn';
+  editBtn.innerHTML='<i class="fas fa-pen"></i> 編輯';
+  editBtn.addEventListener('click',toggleItineraryEdit);
+
+  const iconBadge=document.createElement('div');
+  iconBadge.style.cssText=`width:36px;height:36px;background:${day.color};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem`;
+  iconBadge.textContent=icons[di];
+
+  btnGroup.append(editBtn,iconBadge);
+  header.append(titleBlock,btnGroup);
+
+  const hint=document.createElement('div');
+  hint.className='edit-hint';
+  hint.style.cssText='font-size:.6rem;color:var(--text-s);margin-bottom:8px;opacity:.65;align-items:center;gap:4px';
+  hint.innerHTML='<i class="fas fa-pen" style="font-size:.55rem"></i> 點擊任何文字可編輯，垃圾桶可刪除';
+
+  card.append(header,hint);
+
+  // ── events ──
   day.events.forEach((ev,i)=>{
     const isLast=i===day.events.length-1;
-    html+=`<div style="display:flex;gap:8px;padding:8px 0;${!isLast?'border-bottom:1px dashed rgba(0,0,0,.06)':''}">
-      <div style="min-width:50px;text-align:right;flex-shrink:0;padding-top:2px">
-        <span contenteditable="true" onblur="editEventField(${di},${i},'time',this)" class="time-badge" style="outline:none;display:inline-block">${escH(ev.time)}</span>
-      </div>
-      <div contenteditable="true" onblur="editEventField(${di},${i},'icon',this)" style="font-size:1rem;flex-shrink:0;outline:none;min-width:22px;padding-top:1px">${escH(ev.icon)}</div>
-      <div style="flex:1;min-width:0">
-        <div contenteditable="true" onblur="editEventField(${di},${i},'name',this)" style="font-size:.82rem;font-weight:700;color:var(--text);outline:none;border-bottom:1px dashed transparent;transition:.15s">${escH(ev.name)}</div>
-        <div contenteditable="true" onblur="editEventField(${di},${i},'detail',this)" style="font-size:.68rem;color:var(--text-s);margin-top:2px;line-height:1.55;outline:none;white-space:pre-wrap;border-bottom:1px dashed transparent;transition:.15s">${escH(ev.detail)}</div>
-        ${ev.maps?`<a href="${ev.maps}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:.62rem;color:var(--pink-d);font-weight:700;margin-top:4px;text-decoration:none;background:var(--pink-l);padding:2px 8px;border-radius:8px"><i class="fas fa-map-marker-alt"></i> Maps</a>`:''}
-        ${ev.flightTrack?`<a href="${ev.flightTrack}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:.62rem;color:#1a6bbd;font-weight:700;margin-top:4px;margin-left:4px;text-decoration:none;background:#dbeafe;padding:2px 8px;border-radius:8px"><i class="fas fa-satellite-dish"></i> 追蹤航班</a>`:''}
-      </div>
-      <button class="ev-delete" onclick="deleteEvent(${di},${i})" style="background:none;border:none;color:#e0c0c8;font-size:.72rem;cursor:pointer;flex-shrink:0;padding:2px 3px;align-self:flex-start;transition:.15s" onmouseover="this.style.color='#e05070'" onmouseout="this.style.color='#e0c0c8'" title="刪除此項目"><i class="fas fa-trash-alt"></i></button>
-    </div>`;
+    const row=document.createElement('div');
+    row.style.cssText=`display:flex;gap:8px;padding:8px 0;${!isLast?'border-bottom:1px dashed rgba(0,0,0,.06)':''}`;
+
+    // time badge
+    const timeWrap=document.createElement('div');
+    timeWrap.style.cssText='min-width:50px;text-align:right;flex-shrink:0;padding-top:2px';
+    const timeBadge=document.createElement('span');
+    timeBadge.className='time-badge';
+    timeBadge.contentEditable='true';
+    timeBadge.style.cssText='outline:none;display:inline-block';
+    timeBadge.textContent=ev.time;
+    timeBadge.addEventListener('blur',()=>editEventField(di,i,'time',timeBadge));
+    timeWrap.appendChild(timeBadge);
+
+    // icon
+    const iconEl=document.createElement('div');
+    iconEl.contentEditable='true';
+    iconEl.style.cssText='font-size:1rem;flex-shrink:0;outline:none;min-width:22px;padding-top:1px';
+    iconEl.textContent=ev.icon;
+    iconEl.addEventListener('blur',()=>editEventField(di,i,'icon',iconEl));
+
+    // text block
+    const textBlock=document.createElement('div');
+    textBlock.style.cssText='flex:1;min-width:0';
+
+    const nameEl=document.createElement('div');
+    nameEl.contentEditable='true';
+    nameEl.style.cssText='font-size:.82rem;font-weight:700;color:var(--text);outline:none;border-bottom:1px dashed transparent;transition:.15s';
+    nameEl.textContent=ev.name;
+    nameEl.addEventListener('focus',()=>nameEl.style.borderBottomColor='var(--pink-d)');
+    nameEl.addEventListener('blur',()=>{ nameEl.style.borderBottomColor='transparent'; editEventField(di,i,'name',nameEl); });
+
+    const detailEl=document.createElement('div');
+    detailEl.contentEditable='true';
+    detailEl.style.cssText='font-size:.68rem;color:var(--text-s);margin-top:2px;line-height:1.55;outline:none;white-space:pre-wrap;border-bottom:1px dashed transparent;transition:.15s';
+    detailEl.textContent=ev.detail;
+    detailEl.addEventListener('focus',()=>detailEl.style.borderBottomColor='var(--pink-d)');
+    detailEl.addEventListener('blur',()=>{ detailEl.style.borderBottomColor='transparent'; editEventField(di,i,'detail',detailEl); });
+
+    textBlock.append(nameEl,detailEl);
+
+    // Maps link — href assigned directly, never via string interpolation
+    if(ev.maps){
+      const mapsA=document.createElement('a');
+      mapsA.href=ev.maps; mapsA.target='_blank';
+      mapsA.style.cssText='display:inline-flex;align-items:center;gap:4px;font-size:.62rem;color:var(--pink-d);font-weight:700;margin-top:4px;text-decoration:none;background:var(--pink-l);padding:2px 8px;border-radius:8px';
+      mapsA.innerHTML='<i class="fas fa-map-marker-alt"></i> Maps';
+      textBlock.appendChild(mapsA);
+    }
+    if(ev.flightTrack){
+      const ftA=document.createElement('a');
+      ftA.href=ev.flightTrack; ftA.target='_blank';
+      ftA.style.cssText='display:inline-flex;align-items:center;gap:4px;font-size:.62rem;color:#1a6bbd;font-weight:700;margin-top:4px;margin-left:4px;text-decoration:none;background:#dbeafe;padding:2px 8px;border-radius:8px';
+      ftA.innerHTML='<i class="fas fa-satellite-dish"></i> 追蹤航班';
+      textBlock.appendChild(ftA);
+    }
+
+    // delete button
+    const delBtn=document.createElement('button');
+    delBtn.className='ev-delete';
+    delBtn.style.cssText='background:none;border:none;color:#e0c0c8;font-size:.72rem;cursor:pointer;flex-shrink:0;padding:2px 3px;align-self:flex-start;transition:.15s';
+    delBtn.title='刪除此項目';
+    delBtn.innerHTML='<i class="fas fa-trash-alt"></i>';
+    delBtn.addEventListener('mouseover',()=>delBtn.style.color='#e05070');
+    delBtn.addEventListener('mouseout',()=>delBtn.style.color='#e0c0c8');
+    delBtn.addEventListener('click',()=>deleteEvent(di,i));
+
+    row.append(timeWrap,iconEl,textBlock,delBtn);
+    card.appendChild(row);
   });
 
-  html+=`<button class="ev-add-btn" onclick="addEvent(${di})" style="width:100%;margin-top:10px;padding:9px;border:2px dashed var(--pink-l);border-radius:12px;background:none;color:var(--pink-d);font-size:.75rem;font-weight:800;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif;align-items:center;justify-content:center;gap:6px;transition:.15s" onmouseover="this.style.background='var(--pink-l)'" onmouseout="this.style.background='none'"><i class="fas fa-plus-circle"></i> 新增行程項目</button></div>`;
-  container.innerHTML=html;
+  // ── add event button ──
+  const addBtn=document.createElement('button');
+  addBtn.className='ev-add-btn';
+  addBtn.style.cssText='width:100%;margin-top:10px;padding:9px;border:2px dashed var(--pink-l);border-radius:12px;background:none;color:var(--pink-d);font-size:.75rem;font-weight:800;cursor:pointer;font-family:\'M PLUS Rounded 1c\',sans-serif;align-items:center;justify-content:center;gap:6px;transition:.15s';
+  addBtn.innerHTML='<i class="fas fa-plus-circle"></i> 新增行程項目';
+  addBtn.addEventListener('mouseover',()=>addBtn.style.background='var(--pink-l)');
+  addBtn.addEventListener('mouseout',()=>addBtn.style.background='none');
+  addBtn.addEventListener('click',()=>addEvent(di));
+  card.appendChild(addBtn);
+
+  container.innerHTML='';
+  container.appendChild(card);
 }
 
 (function(){
@@ -1053,12 +1262,24 @@ function renderDay(d){
 })();
 renderDay(1);
 
+// ===== GENERIC TAB SWITCHER =====
+// prefix: id prefix of content panels e.g. 'usj'
+// tabs:   array of tab ids e.g. ['overview','xin','song']
+// active: the tab to show
+// btn:    the clicked button element
+// scope:  querySelector scope for sub-tab buttons
+function switchTab(prefix, tabs, active, btn, scope){
+  tabs.forEach(t=>{
+    const el=document.getElementById(prefix+'-'+t);
+    if(el) el.style.display= t===active ? 'block' : 'none';
+  });
+  document.querySelectorAll(scope+' .sub-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
 // ===== USJ SUBTABS =====
 function showUsj(tab,btn){
-  ['overview','xin','song'].forEach(t=>document.getElementById('usj-'+t).style.display='none');
-  document.getElementById('usj-'+tab).style.display='block';
-  document.querySelectorAll('#page-usj .sub-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  switchTab('usj',['overview','xin','song'],tab,btn,'#page-usj');
   if(tab==='xin'){restoreTicketZone('xin-ticket');restoreTicketZone('xin-express');}
   if(tab==='song'){restoreTicketZone('song-ticket');restoreTicketZone('song-express');}
 }
@@ -1115,10 +1336,7 @@ function handleTicketUpload(event){
 
 // ===== TRANSPORT =====
 function showTransport(tab,btn){
-  ['subway','jr','spots'].forEach(t=>{const el=document.getElementById('transport-'+t);if(el)el.style.display='none';});
-  document.getElementById('transport-'+tab).style.display='block';
-  document.querySelectorAll('#page-transport .sub-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  switchTab('transport',['subway','jr','spots'],tab,btn,'#page-transport');
 }
 function renderSpots(){
   const el=document.getElementById('spots-list');if(!el)return;
@@ -1137,11 +1355,38 @@ function calcClear(){calcExpr='';document.getElementById('calc-display').textCon
 function calcEqual(){try{const expr=calcExpr+(document.getElementById('calc-display').textContent);const result=Function('"use strict";return ('+expr+')')();document.getElementById('calc-expr').textContent=expr+' =';document.getElementById('calc-display').textContent=result%1===0?result:result.toFixed(2);calcExpr='';updateCalcTwd();}catch{calcClear();}}
 
 // ===== WALLET =====
-function showWallet(tab,btn){['calc','add','list','summary'].forEach(t=>{const el=document.getElementById('wallet-'+t);if(el)el.style.display='none';});document.getElementById('wallet-'+tab).style.display='block';document.querySelectorAll('#page-wallet .sub-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(tab==='list')renderExpenseList();if(tab==='summary')renderSummary();}
+function showWallet(tab,btn){
+  switchTab('wallet',['calc','add','list','summary'],tab,btn,'#page-wallet');
+  if(tab==='list') renderExpenseList();
+  if(tab==='summary') renderSummary();
+}
 let expPhoto='';
 function handleExpPhoto(event){const file=event.target.files[0];if(!file)return;compressImage(file,300,300,0.6,function(b64){expPhoto=b64;document.getElementById('exp-photo-preview').innerHTML=`<img src="${b64}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:2px solid var(--pink-l)">`;});}
-function addExpense(){const name=document.getElementById('exp-name').value.trim();const jpy=parseFloat(document.getElementById('exp-jpy').value);const payer=document.getElementById('exp-payer').value;const split=document.getElementById('exp-split').value;if(!name||isNaN(jpy)||jpy<=0){alert('請填寫品項和金額！');return;}expenses.push({id:Date.now(),name,jpy,twd:Math.round(jpy*jpyRate),payer,split,photo:expPhoto,date:new Date().toLocaleDateString('zh-TW')});saveExpenses();document.getElementById('exp-name').value='';document.getElementById('exp-jpy').value='';expPhoto='';document.getElementById('exp-photo-preview').innerHTML='';alert('✅ 新增成功！');}
-function deleteExpense(id){if(!confirm('確定刪除這筆支出？'))return;expenses=expenses.filter(e=>e.id!==id);saveExpenses();renderExpenseList();renderSummary();}
+function addExpense(){
+  const name=document.getElementById('exp-name').value.trim();
+  const jpy=parseFloat(document.getElementById('exp-jpy').value);
+  const payer=document.getElementById('exp-payer').value;
+  const split=document.getElementById('exp-split').value;
+  if(!name||isNaN(jpy)||jpy<=0){showToast('⚠️ 請填寫品項和金額！','warn');return;}
+  expenses.push({id:Date.now(),name,jpy,twd:Math.round(jpy*jpyRate),payer,split,photo:expPhoto,date:new Date().toLocaleDateString('zh-TW')});
+  saveExpenses();
+  document.getElementById('exp-name').value='';
+  document.getElementById('exp-jpy').value='';
+  expPhoto='';
+  document.getElementById('exp-photo-preview').innerHTML='';
+  showToast('✅ 新增成功！');
+  // auto jump to list tab
+  const listBtn = document.querySelector('#page-wallet .sub-tab:nth-child(2)');
+  if(listBtn) showWallet('list', listBtn);
+}
+function deleteExpense(id){
+  showConfirm('確定刪除這筆支出？', ()=>{
+    expenses=expenses.filter(e=>e.id!==id);
+    saveExpenses();
+    renderExpenseList();
+    renderSummary();
+  });
+}
 function renderExpenseList(){const el=document.getElementById('expense-list-container');if(!el)return;if(expenses.length===0){el.innerHTML=`<div style="text-align:center;padding:30px;color:var(--text-s);font-size:.8rem"><div style="font-size:2rem;margin-bottom:8px">💸</div>還沒有任何支出記錄</div>`;return;}el.innerHTML=expenses.slice().reverse().map(e=>`<div class="expense-row"><div style="display:flex;gap:8px;align-items:flex-start">${e.photo?`<img src="${e.photo}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer" onclick="viewImg('${e.photo}')">`:`<div style="width:44px;height:44px;background:var(--pink-l);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">🧾</div>`}<div style="flex:1"><div style="font-size:.85rem;font-weight:700">${e.name}</div><div style="font-size:.7rem;color:var(--text-s);margin-top:2px">${e.date}</div><div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap"><span style="font-size:.75rem;font-weight:800;color:var(--pink-d)">¥${e.jpy.toLocaleString()}</span><span style="font-size:.7rem;color:var(--text-s)">≈ NT$${e.twd.toLocaleString()}</span><span class="pill ${e.payer==='xin'?'split-badge-yes':'split-badge-no'}" style="font-size:.6rem">${e.payer==='xin'?'👸 欣亮':'🧑 松銘'}付</span><span class="pill" style="background:${e.split==='yes'?'var(--mint)':'var(--peach)'};color:${e.split==='yes'?'#1a5c43':'#7a4a00'};font-size:.6rem">${e.split==='yes'?'💕 分帳':'個人'}</span></div></div><button onclick="deleteExpense(${e.id})" style="background:none;border:none;color:#ccc;font-size:.8rem;cursor:pointer;padding:4px">✕</button></div></div>`).join('');}
 function renderSummary(){const el=document.getElementById('summary-content');if(!el)return;if(expenses.length===0){el.innerHTML=`<div style="text-align:center;color:var(--text-s);font-size:.8rem">還沒有支出記錄</div>`;return;}let xinTotal=0,songTotal=0,xinPaid=0,songPaid=0;expenses.forEach(e=>{if(e.payer==='xin')xinPaid+=e.jpy;else songPaid+=e.jpy;if(e.split==='yes'){xinTotal+=e.jpy/2;songTotal+=e.jpy/2;}else{if(e.payer==='xin')xinTotal+=e.jpy;else songTotal+=e.jpy;}});const settlementAmt=Math.abs(xinTotal-songTotal);let settlement=settlementAmt<1?'💕 兩人已平帳！':xinTotal>songTotal?`💌 松銘 需轉給 欣亮 <strong>¥${Math.round(settlementAmt).toLocaleString()}</strong> (≈NT$${Math.round(settlementAmt*jpyRate).toLocaleString()})`:`💌 欣亮 需轉給 松銘 <strong>¥${Math.round(settlementAmt).toLocaleString()}</strong> (≈NT$${Math.round(settlementAmt*jpyRate).toLocaleString()})`;el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><div style="background:rgba(255,255,255,.6);border-radius:12px;padding:10px;text-align:center"><div style="font-size:.7rem;color:var(--text-s)">👸 欣亮</div><div style="font-size:1rem;font-weight:900;color:var(--pink-d)">¥${Math.round(xinTotal).toLocaleString()}</div><div style="font-size:.65rem;color:var(--text-s)">≈NT$${Math.round(xinTotal*jpyRate).toLocaleString()}</div><div style="font-size:.6rem;color:var(--text-s);margin-top:4px">實際付出¥${xinPaid.toLocaleString()}</div></div><div style="background:rgba(255,255,255,.6);border-radius:12px;padding:10px;text-align:center"><div style="font-size:.7rem;color:var(--text-s)">🧑 松銘</div><div style="font-size:1rem;font-weight:900;color:var(--lav-d)">¥${Math.round(songTotal).toLocaleString()}</div><div style="font-size:.65rem;color:var(--text-s)">≈NT$${Math.round(songTotal*jpyRate).toLocaleString()}</div><div style="font-size:.6rem;color:var(--text-s);margin-top:4px">實際付出¥${songPaid.toLocaleString()}</div></div></div><div style="background:rgba(255,255,255,.7);border-radius:12px;padding:12px;text-align:center;font-size:.8rem;line-height:1.7"><div style="font-weight:800;margin-bottom:4px">🧮 分帳結算</div><div>${settlement}</div><div style="font-size:.7rem;color:var(--text-s);margin-top:6px">共 ${expenses.length} 筆支出｜總計 ¥${(xinPaid+songPaid).toLocaleString()}</div></div>`;}
 
@@ -1151,7 +1396,10 @@ function toggleCheck(i){checklist[i].done=!checklist[i].done;saveChecklist();ren
 function addCheckItem(){const inp=document.getElementById('new-check-item');const text=inp.value.trim();if(!text)return;checklist.push({text,done:false});saveChecklist();inp.value='';renderChecklist();}
 
 // ===== MEMOS =====
-function showList(tab,btn){document.getElementById('list-check').style.display=tab==='check'?'block':'none';document.getElementById('list-memo').style.display=tab==='memo'?'block':'none';document.querySelectorAll('#page-lists .sub-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(tab==='memo')renderMemos();}
+function showList(tab,btn){
+  switchTab('list',['check','memo'],tab,btn,'#page-lists');
+  if(tab==='memo') renderMemos();
+}
 function addMemo(){const inp=document.getElementById('memo-input');const text=inp.value.trim();if(!text)return;memos.push({id:Date.now(),text});saveMemos();inp.value='';renderMemos();}
 function deleteMemo(id){memos=memos.filter(m=>m.id!==id);saveMemos();renderMemos();}
 function renderMemos(){const el=document.getElementById('memo-list');if(!el)return;if(memos.length===0){el.innerHTML='';return;}const urlRegex=/(https?:\/\/[^\s]+)/g;el.innerHTML=memos.slice().reverse().map(m=>{const content=m.text.replace(urlRegex,url=>`<a href="${url}" target="_blank" style="color:var(--pink-d);text-decoration:underline;font-weight:700">${url}</a>`);return `<div style="background:var(--yel);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:.8rem;line-height:1.7;position:relative">${content}<button onclick="deleteMemo(${m.id})" style="position:absolute;top:6px;right:8px;background:none;border:none;color:#ccc;cursor:pointer;font-size:.75rem">✕</button></div>`;}).join('');}
@@ -1197,8 +1445,6 @@ function updateMemDay(id,val){
   if(m){m.day=val;saveMemories();}
 }
 
-const DAY_LABELS={'all':'','1':'Day 1 · 4/22','2':'Day 2 · 4/23','3':'Day 3 · 4/24','4':'Day 4 · 4/25','5':'Day 5 · 4/26','6':'Day 6 · 4/27'};
-
 function renderMemories(){
   const list=document.getElementById('memory-list');
   const empty=document.getElementById('memory-empty');
@@ -1231,76 +1477,64 @@ function renderMemories(){
   </div>`;
 }
 
-/* ── 點縮圖後彈出詳細面板 ── */
+/* ── 點縮圖後彈出詳細面板 (獨立 overlay，不動 img-modal) ── */
 function openMemDetail(id){
   const m=memories.find(x=>x.id===id);
   if(!m)return;
-
-  // reuse img-modal overlay but with a richer sheet
-  const overlay=document.getElementById('img-modal');
-  overlay.innerHTML=`
-    <div onclick="event.stopPropagation()" style="background:#fff;width:100%;max-height:92vh;border-radius:24px 24px 0 0;overflow-y:auto;padding-bottom:max(env(safe-area-inset-bottom),16px)">
-      <!-- handle -->
-      <div style="width:36px;height:4px;background:#e0d0d8;border-radius:2px;margin:12px auto 0"></div>
-      <!-- image -->
-      <img src="${m.data}" style="width:100%;max-height:55vh;object-fit:contain;display:block;background:#111;margin-top:8px">
-      <!-- info -->
-      <div style="padding:12px 16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-size:.68rem;color:var(--text-s)">${m.date}</div>
-          <button onclick="deleteMemoryFromDetail(${m.id})"
-            style="background:var(--pink-l);border:none;border-radius:10px;padding:5px 12px;font-size:.65rem;font-weight:800;color:#c04060;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif">
-            🗑️ 刪除
-          </button>
-        </div>
-        <!-- day selector -->
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
-          <span style="font-size:.68rem;color:var(--text-s);flex-shrink:0">📅 天數</span>
-          <select onchange="updateMemDay(${m.id},this.value)"
-            style="font-size:.7rem;font-weight:700;border:1.5px solid var(--pink-l);border-radius:8px;padding:4px 8px;background:#fff;color:var(--text);outline:none;font-family:'M PLUS Rounded 1c',sans-serif;-webkit-appearance:none;appearance:none;cursor:pointer;flex:1">
-            <option value="all" ${m.day==='all'?'selected':''}>不分天</option>
-            <option value="1" ${m.day==='1'?'selected':''}>Day 1 · 4/22</option>
-            <option value="2" ${m.day==='2'?'selected':''}>Day 2 · 4/23</option>
-            <option value="3" ${m.day==='3'?'selected':''}>Day 3 · 4/24</option>
-            <option value="4" ${m.day==='4'?'selected':''}>Day 4 · 4/25</option>
-            <option value="5" ${m.day==='5'?'selected':''}>Day 5 · 4/26</option>
-            <option value="6" ${m.day==='6'?'selected':''}>Day 6 · 4/27</option>
-          </select>
-        </div>
-        <!-- caption -->
-        <div style="font-size:.7rem;color:var(--text-s);margin-bottom:4px">📝 描述</div>
-        <div id="detail-caption-${m.id}" contenteditable="true"
-          onblur="updateCaption(${m.id},this.innerText.trim())"
-          style="font-size:.82rem;color:var(--text);outline:none;border:1.5px solid var(--pink-l);border-radius:10px;padding:8px 10px;min-height:38px;line-height:1.6;transition:.15s"
-          onfocus="this.style.borderColor='var(--pink-d)'"
-        >${m.caption||''}</div>
-        <div style="font-size:.58rem;color:var(--text-s);margin-top:4px;opacity:.6"><i class="fas fa-pen" style="font-size:.5rem"></i> 點擊可編輯</div>
-        <!-- close -->
-        <button onclick="closeMemDetail()"
-          style="width:100%;margin-top:14px;padding:12px;background:var(--pink-l);border:none;border-radius:14px;font-size:.82rem;font-weight:800;color:var(--pink-d);cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif">
-          關閉
+  const sheet=document.getElementById('mem-detail-sheet');
+  const overlay=document.getElementById('mem-detail-overlay');
+  sheet.innerHTML=`
+    <div style="width:36px;height:4px;background:#e0d0d8;border-radius:2px;margin:12px auto 0"></div>
+    <img src="${m.data}" style="width:100%;max-height:55vh;object-fit:contain;display:block;background:#111;margin-top:8px">
+    <div style="padding:12px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:.68rem;color:var(--text-s)">${m.date}</div>
+        <button onclick="deleteMemoryFromDetail(${m.id})"
+          style="background:var(--pink-l);border:none;border-radius:10px;padding:5px 12px;font-size:.65rem;font-weight:800;color:#c04060;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif">
+          🗑️ 刪除
         </button>
       </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+        <span style="font-size:.68rem;color:var(--text-s);flex-shrink:0">📅 天數</span>
+        <select onchange="updateMemDay(${m.id},this.value)"
+          style="font-size:.7rem;font-weight:700;border:1.5px solid var(--pink-l);border-radius:8px;padding:4px 8px;background:#fff;color:var(--text);outline:none;font-family:'M PLUS Rounded 1c',sans-serif;-webkit-appearance:none;appearance:none;cursor:pointer;flex:1">
+          <option value="all" ${m.day==='all'?'selected':''}>不分天</option>
+          <option value="1" ${m.day==='1'?'selected':''}>Day 1 · 4/22</option>
+          <option value="2" ${m.day==='2'?'selected':''}>Day 2 · 4/23</option>
+          <option value="3" ${m.day==='3'?'selected':''}>Day 3 · 4/24</option>
+          <option value="4" ${m.day==='4'?'selected':''}>Day 4 · 4/25</option>
+          <option value="5" ${m.day==='5'?'selected':''}>Day 5 · 4/26</option>
+          <option value="6" ${m.day==='6'?'selected':''}>Day 6 · 4/27</option>
+        </select>
+      </div>
+      <div style="font-size:.7rem;color:var(--text-s);margin-bottom:4px">📝 描述</div>
+      <div contenteditable="true"
+        onblur="updateCaption(${m.id},this.innerText.trim())"
+        style="font-size:.82rem;color:var(--text);outline:none;border:1.5px solid var(--pink-l);border-radius:10px;padding:8px 10px;min-height:38px;line-height:1.6;transition:.15s"
+        onfocus="this.style.borderColor='var(--pink-d)'"
+      >${m.caption||''}</div>
+      <div style="font-size:.58rem;color:var(--text-s);margin-top:4px;opacity:.6"><i class="fas fa-pen" style="font-size:.5rem"></i> 點擊可編輯</div>
+      <button onclick="closeMemDetail()"
+        style="width:100%;margin-top:14px;padding:12px;background:var(--pink-l);border:none;border-radius:14px;font-size:.82rem;font-weight:800;color:var(--pink-d);cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif">
+        關閉
+      </button>
     </div>`;
   overlay.classList.add('open');
-  // clicking overlay background closes it
-  overlay.onclick=function(e){if(e.target===overlay)closeMemDetail();};
+  overlay.onclick=(e)=>{ if(e.target===overlay) closeMemDetail(); };
 }
 
 function closeMemDetail(){
-  const overlay=document.getElementById('img-modal');
-  overlay.classList.remove('open');
-  // restore original structure for viewImg
-  overlay.innerHTML=`<div onclick="event.stopPropagation()" style="background:#000;width:100%;max-height:90vh;display:flex;align-items:center;justify-content:center;border-radius:24px 24px 0 0;padding:20px"><img id="img-modal-src" style="max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain"></div>`;
-  overlay.onclick=function(){overlay.classList.remove('open');};
+  document.getElementById('mem-detail-overlay').classList.remove('open');
   renderMemories();
 }
 
 function deleteMemoryFromDetail(id){
-  if(!confirm('確定刪除這張照片？'))return;
-  memories=memories.filter(m=>m.id!==id);
-  saveMemories();
-  closeMemDetail();
+  showConfirm('確定刪除這張照片？', ()=>{
+    memories=memories.filter(m=>m.id!==id);
+    saveMemories();
+    closeMemDetail();
+    showToast('🗑️ 已刪除', 'success', 1800);
+  });
 }
 
 // ===== IMAGE VIEWER =====
