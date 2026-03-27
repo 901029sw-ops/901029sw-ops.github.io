@@ -1189,7 +1189,7 @@ function processMemFiles(){
   const files=[...pendingMemFiles];
   const dayTag=pendingMemDay;
   files.forEach(file=>{
-    compressImage(file,700,700,0.72,function(b64){
+    compressImage(file,500,500,0.6,function(b64){
       memories.push({id:Date.now()+Math.random(),data:b64,date:new Date().toLocaleDateString('zh-TW'),caption:'',day:dayTag});
       processed++;
       if(processed===files.length){saveMemories();renderMemories();}
