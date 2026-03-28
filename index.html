@@ -152,6 +152,13 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
   border:none;cursor:pointer;font-family:'M PLUS Rounded 1c',sans-serif;
   z-index:2;
 }
+.ticket-zone .t-delete-btn{
+  position:absolute;bottom:8px;left:8px;
+  background:rgba(180,30,30,.75);color:#fff;
+  font-size:.65rem;padding:4px 8px;border-radius:8px;
+  border:none;cursor:pointer;
+  z-index:2;
+}
 .ticket-zone .t-view-btn{
   position:absolute;bottom:8px;left:8px;
   background:rgba(0,0,0,.6);color:#fff;
@@ -571,7 +578,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
       </div>
 
       <!-- single hidden file input for all ticket uploads -->
-      <input type="file" id="ticket-upload-input" accept="image/*" capture="environment" style="display:none" onchange="handleTicketUpload(event)">
+      <input type="file" id="ticket-upload-input" accept="image/*" style="display:none" onchange="handleTicketUpload(event)">
     </div>
 
     <!-- ======== PAGE: TRANSPORT ======== -->
@@ -746,7 +753,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
           <a href="https://transit.yahoo.co.jp/" target="_blank" class="btn-lav" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-train"></i> 乘換案內</a>
           <a href="https://www.google.com/search?q=JPY+TWD+rate" target="_blank" class="btn-mint" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-yen-sign"></i> 即時匯率</a>
           <a href="https://www.usj.co.jp/web/ja/jp" target="_blank" class="btn-pink" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-star"></i> USJ官網</a>
-          <a href="https://www.southernkansai-expressway.co.jp/" target="_blank" class="btn-lav" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-bus"></i> 南海電鐵</a>
+          <a href="https://www.nankai.co.jp/tc_railway/traffic/railmap.html" target="_blank" class="btn-lav" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-bus"></i> 南海電鐵</a>
         </div>
       </div>
     </div>
@@ -767,7 +774,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
       </div>
 
       <div class="card" style="padding:12px">
-        <div style="font-size:.8rem;font-weight:800;color:var(--pink-d);margin-bottom:10px">我們的旅行相簿 💕</div>
+        <div style="font-size:.8rem;font-weight:800;color:var(--pink-d);margin-bottom:10px">旅行相簿 💕</div>
 
         <!-- 先選天、再上傳 -->
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
@@ -1297,11 +1304,10 @@ function renderTicketZone(key,b64){
   const zone=document.getElementById('zone-'+key);
   const placeholder=document.getElementById('placeholder-'+key);
   if(!zone)return;
-  // Replace placeholder with image + action buttons
   placeholder.style.display='none';
   zone.classList.add('has-image');
   // Remove any previously added img/buttons
-  zone.querySelectorAll('img,.t-change-btn,.t-view-btn').forEach(el=>el.remove());
+  zone.querySelectorAll('img,.t-change-btn,.t-view-btn,.t-delete-btn').forEach(el=>el.remove());
   const img=document.createElement('img');
   img.src=b64;
   img.onclick=function(e){e.stopPropagation();viewImg(b64)};
@@ -1314,6 +1320,25 @@ function renderTicketZone(key,b64){
   changeBtn.className='t-change-btn';changeBtn.textContent='✏️ 更換';
   changeBtn.onclick=function(e){e.stopPropagation();triggerTicketUpload(key);};
   zone.appendChild(changeBtn);
+  const delBtn=document.createElement('button');
+  delBtn.className='t-delete-btn';delBtn.textContent='🗑️';
+  delBtn.onclick=function(e){e.stopPropagation();deleteTicket(key);};
+  zone.appendChild(delBtn);
+}
+
+function deleteTicket(key){
+  showConfirm('確定刪除這張票券圖片？',()=>{
+    delete ticketImages[key];
+    saveTickets();
+    // Reset zone back to placeholder state
+    const zone=document.getElementById('zone-'+key);
+    const placeholder=document.getElementById('placeholder-'+key);
+    if(!zone||!placeholder)return;
+    zone.querySelectorAll('img,.t-change-btn,.t-view-btn,.t-delete-btn').forEach(el=>el.remove());
+    zone.classList.remove('has-image');
+    placeholder.style.display='';
+    showToast('🗑️ 已刪除','success',1800);
+  });
 }
 
 /* === TICKET UPLOAD === */
