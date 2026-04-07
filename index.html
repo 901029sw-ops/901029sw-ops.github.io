@@ -27,11 +27,10 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 
 /* LAYOUT */
 #app{display:flex;flex-direction:column;height:100vh;height:100dvh}
-#hero{position:relative;flex-shrink:0;z-index:10}
 #main-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:125px}
 #bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:50}
 
-/* HERO — collapsible */
+/* HERO */
 .hero-bg{
   position:relative;overflow:hidden;
   height:210px;
@@ -40,45 +39,6 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
   padding-bottom:24px;
   background-image:url('https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=1200&q=80');
   background-size:cover;background-position:center;
-  transition:height .32s cubic-bezier(.4,0,.2,1),
-             padding-top .32s cubic-bezier(.4,0,.2,1),
-             padding-bottom .32s cubic-bezier(.4,0,.2,1);
-  will-change:height;
-}
-/* collapsed state */
-.hero-bg.collapsed{
-  height:max(calc(env(safe-area-inset-top) + 44px), 52px);
-  padding-top:max(env(safe-area-inset-top), 8px);
-  padding-bottom:4px;
-  justify-content:flex-start;
-  flex-direction:row;
-  align-items:center;
-  gap:10px;
-  padding-left:16px;
-}
-/* titles fade out when collapsing */
-.hero-title-zh,.hero-title-en,.hero-sub{
-  transition:opacity .2s ease, transform .2s ease, font-size .25s ease;
-  transform-origin:top center;
-}
-.hero-bg.collapsed .hero-title-zh,
-.hero-bg.collapsed .hero-title-en,
-.hero-bg.collapsed .hero-sub{
-  display:none;
-}
-/* countdown adapts */
-.countdown-box{
-  display:inline-flex;gap:5px;margin-top:6px;position:relative;z-index:1;
-  background:linear-gradient(135deg,#FF6B6B,#FFD93D);
-  backdrop-filter:blur(10px);border-radius:16px;border:none;
-  padding:5px 18px;align-items:center;
-  transition:margin-top .25s ease, padding .25s ease, border-radius .25s ease, transform .25s ease;
-  flex-shrink:0;
-}
-.hero-bg.collapsed .countdown-box{
-  margin-top:0;
-  padding:4px 12px;
-  border-radius:12px;
 }
 .hero-bg::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.28);z-index:0}
 .hero-title-zh{font-family:'M PLUS Rounded 1c',sans-serif;font-weight:900;font-size:2rem;color:#fff;position:relative;z-index:1;text-align:center;letter-spacing:.08em;line-height:1.15;text-shadow:2px 2px 0px #E60012,-1px -1px 0px #FFD700}
@@ -343,27 +303,28 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 <body>
 
 <div id="app">
-  <!-- ===== HERO ===== -->
-  <div id="hero">
-    <div class="hero-bg">
-      <span class="sakura-float" style="left:5%;animation-duration:6s;animation-delay:0s">🌸</span>
-      <span class="sakura-float" style="left:18%;animation-duration:8s;animation-delay:1s">🌸</span>
-      <span class="sakura-float" style="left:38%;animation-duration:7s;animation-delay:2s">🌸</span>
-      <span class="sakura-float" style="left:62%;animation-duration:9s;animation-delay:.5s">🌸</span>
-      <span class="sakura-float" style="left:80%;animation-duration:6.5s;animation-delay:3s">🌸</span>
-      <span class="sakura-float" style="left:92%;animation-duration:7.5s;animation-delay:1.5s">🌸</span>
-      <div class="hero-title-zh">大阪週年屁屁遊</div>
-      <div class="hero-title-en">OH!Saka 2026</div>
-      <div class="hero-sub">2026.04.22 — 2026.04.27 ✈️</div>
-      <div class="countdown-box" id="countdown">
-        <span class="cd-plane">✈️</span>
-        <div class="cd-text">倒數 <span id="cd-d">--</span> 天 <span id="cd-h">--</span> 小時 <span id="cd-m">--</span> 分 <span id="cd-s">--</span> 秒</div>
-      </div>
-    </div>
-  </div>
 
   <!-- ===== MAIN CONTENT ===== -->
   <div id="main-content">
+
+    <!-- ===== HERO (scrolls with content) ===== -->
+    <div id="hero">
+      <div class="hero-bg">
+        <span class="sakura-float" style="left:5%;animation-duration:6s;animation-delay:0s">🌸</span>
+        <span class="sakura-float" style="left:18%;animation-duration:8s;animation-delay:1s">🌸</span>
+        <span class="sakura-float" style="left:38%;animation-duration:7s;animation-delay:2s">🌸</span>
+        <span class="sakura-float" style="left:62%;animation-duration:9s;animation-delay:.5s">🌸</span>
+        <span class="sakura-float" style="left:80%;animation-duration:6.5s;animation-delay:3s">🌸</span>
+        <span class="sakura-float" style="left:92%;animation-duration:7.5s;animation-delay:1.5s">🌸</span>
+        <div class="hero-title-zh">大阪週年屁屁遊</div>
+        <div class="hero-title-en">OH!Saka 2026</div>
+        <div class="hero-sub">2026.04.22 — 2026.04.27 ✈️</div>
+        <div class="countdown-box" id="countdown">
+          <span class="cd-plane">✈️</span>
+          <div class="cd-text">倒數 <span id="cd-d">--</span> 天 <span id="cd-h">--</span> 小時 <span id="cd-m">--</span> 分 <span id="cd-s">--</span> 秒</div>
+        </div>
+      </div>
+    </div>
 
     <!-- ======== PAGE: PLAN ======== -->
     <div id="page-plan" class="page active">
@@ -1297,8 +1258,6 @@ function showPage(p){
   document.getElementById('nav-'+p).classList.add('active');
   const mc = document.getElementById('main-content');
   mc.scrollTop=0;
-  // Reset hero to expanded when jumping to a new page
-  document.querySelector('.hero-bg').classList.remove('collapsed');
   currentPage=p;
   if(p==='wallet'){fetchRate();renderExpenseList();renderSummary();}
   if(p==='lists'){renderChecklist();renderMemos();}
@@ -2020,21 +1979,6 @@ function compressImage(file,maxW,maxH,quality,callback){
   };
   reader.readAsDataURL(file);
 }
-
-// ===== COLLAPSIBLE HERO =====
-(function(){
-  const content  = document.getElementById('main-content');
-  const heroBg   = document.querySelector('.hero-bg');
-  const THRESHOLD = 40; // px scrolled before collapsing
-
-  content.addEventListener('scroll', ()=>{
-    if(content.scrollTop > THRESHOLD){
-      heroBg.classList.add('collapsed');
-    } else {
-      heroBg.classList.remove('collapsed');
-    }
-  }, {passive:true});
-})();
 
 // ===== INIT =====
 // Expose render functions so Firebase listeners can call them
