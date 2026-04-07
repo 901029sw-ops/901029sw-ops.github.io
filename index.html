@@ -27,18 +27,58 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 
 /* LAYOUT */
 #app{display:flex;flex-direction:column;height:100vh;height:100dvh}
-#hero{position:relative;flex-shrink:0}
+#hero{position:relative;flex-shrink:0;z-index:10}
 #main-content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:125px}
 #bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:50}
 
-/* HERO */
+/* HERO — collapsible */
 .hero-bg{
   position:relative;overflow:hidden;
-  height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:210px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding-top:max(env(safe-area-inset-top), 28px);
   padding-bottom:24px;
   background-image:url('https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=1200&q=80');
   background-size:cover;background-position:center;
+  transition:height .32s cubic-bezier(.4,0,.2,1),
+             padding-top .32s cubic-bezier(.4,0,.2,1),
+             padding-bottom .32s cubic-bezier(.4,0,.2,1);
+  will-change:height;
+}
+/* collapsed state */
+.hero-bg.collapsed{
+  height:max(calc(env(safe-area-inset-top) + 44px), 52px);
+  padding-top:max(env(safe-area-inset-top), 8px);
+  padding-bottom:4px;
+  justify-content:flex-start;
+  flex-direction:row;
+  align-items:center;
+  gap:10px;
+  padding-left:16px;
+}
+/* titles fade out when collapsing */
+.hero-title-zh,.hero-title-en,.hero-sub{
+  transition:opacity .2s ease, transform .2s ease, font-size .25s ease;
+  transform-origin:top center;
+}
+.hero-bg.collapsed .hero-title-zh,
+.hero-bg.collapsed .hero-title-en,
+.hero-bg.collapsed .hero-sub{
+  display:none;
+}
+/* countdown adapts */
+.countdown-box{
+  display:inline-flex;gap:5px;margin-top:6px;position:relative;z-index:1;
+  background:linear-gradient(135deg,#FF6B6B,#FFD93D);
+  backdrop-filter:blur(10px);border-radius:16px;border:none;
+  padding:5px 18px;align-items:center;
+  transition:margin-top .25s ease, padding .25s ease, border-radius .25s ease, transform .25s ease;
+  flex-shrink:0;
+}
+.hero-bg.collapsed .countdown-box{
+  margin-top:0;
+  padding:4px 12px;
+  border-radius:12px;
 }
 .hero-bg::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.28);z-index:0}
 .hero-title-zh{font-family:'M PLUS Rounded 1c',sans-serif;font-weight:900;font-size:2rem;color:#fff;position:relative;z-index:1;text-align:center;letter-spacing:.08em;line-height:1.15;text-shadow:2px 2px 0px #E60012,-1px -1px 0px #FFD700}
@@ -707,6 +747,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
       <div class="sec-title">📋 清單</div>
       <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none">
         <button class="sub-tab active" onclick="showList('check',this)">行前清單</button>
+        <button class="sub-tab" onclick="showList('shopping',this)">🛍️ 購物清單</button>
         <button class="sub-tab" onclick="showList('memo',this)">備忘錄</button>
       </div>
       <div id="list-check">
@@ -722,6 +763,41 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
           </div>
         </div>
       </div>
+
+      <!-- SHOPPING LIST -->
+      <div id="list-shopping" style="display:none">
+        <div class="card">
+          <div style="font-size:.8rem;font-weight:800;color:var(--pink-d);margin-bottom:12px">🛍️ 購物清單</div>
+          <!-- Add form -->
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;background:var(--pink-l);border-radius:14px;padding:12px">
+            <input type="text" id="shop-item" class="cute-input" placeholder="商品名稱（例：眼藥水、抹茶Kit Kat...）">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div>
+                <label style="font-size:.68rem;font-weight:700;color:var(--text-s);display:block;margin-bottom:3px">幫誰買</label>
+                <input type="text" id="shop-for" class="cute-input" placeholder="例：欣亮、松銘、媽媽...">
+              </div>
+              <div>
+                <label style="font-size:.68rem;font-weight:700;color:var(--text-s);display:block;margin-bottom:3px">備註（可選）</label>
+                <input type="text" id="shop-note" class="cute-input" placeholder="例：藥妝店、限定款">
+              </div>
+            </div>
+            <button onclick="addShopItem()" class="btn-pink" style="width:100%;justify-content:center;padding:10px">
+              <i class="fas fa-plus-circle"></i> 加入清單
+            </button>
+          </div>
+          <!-- Search filter -->
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+            <i class="fas fa-search" style="font-size:.75rem;color:var(--text-s);flex-shrink:0"></i>
+            <input type="text" id="shop-search" class="cute-input" placeholder="搜尋商品或幫誰買..." oninput="renderShopList()" style="flex:1;padding:6px 10px">
+          </div>
+          <div id="shop-list-container"></div>
+          <div id="shop-empty" style="text-align:center;padding:20px;color:var(--text-s);font-size:.8rem;display:none">
+            <div style="font-size:2rem;margin-bottom:6px">🛒</div>
+            還沒有購物項目～
+          </div>
+        </div>
+      </div>
+
       <div id="list-memo" style="display:none">
         <div class="card">
           <div style="font-size:.8rem;font-weight:800;color:var(--pink-d);margin-bottom:10px">📝 個人備忘錄</div>
@@ -980,6 +1056,14 @@ onValue(ref(db,'jpyRate'), snap=>{
   if(el) el.textContent=`¥1 = NT$${window.jpyRate.toFixed(4)}`;
 });
 
+// Shopping list
+onValue(ref(db,'shopItems'), snap=>{
+  const val = snap.val();
+  window.shopItems = val ? (typeof val==='string'?JSON.parse(val):val) : [];
+  localStorage.setItem('osaka_shop', JSON.stringify(window.shopItems));
+  if(window.renderShopList) window.renderShopList();
+});
+
 </script>
 
 <script>
@@ -1211,7 +1295,10 @@ function showPage(p){
   document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   document.getElementById('nav-'+p).classList.add('active');
-  document.getElementById('main-content').scrollTop=0;
+  const mc = document.getElementById('main-content');
+  mc.scrollTop=0;
+  // Reset hero to expanded when jumping to a new page
+  document.querySelector('.hero-bg').classList.remove('collapsed');
   currentPage=p;
   if(p==='wallet'){fetchRate();renderExpenseList();renderSummary();}
   if(p==='lists'){renderChecklist();renderMemos();}
@@ -1497,8 +1584,17 @@ function initDragSort(card, di){
       const destIdx = parseInt(overRow.dataset.idx);
       if(!isNaN(srcIdx) && !isNaN(destIdx) && srcIdx !== destIdx){
         const events = ITINERARY[di].events;
+
+        // Save all times before reorder
+        const times = events.map(ev => ev.time);
+
+        // Move the full event object
         const [moved] = events.splice(srcIdx, 1);
         events.splice(destIdx, 0, moved);
+
+        // Restore original times (times stay fixed, only content moves)
+        events.forEach((ev, i) => { ev.time = times[i]; });
+
         saveItinerary();
         // Re-render preserving edit mode
         itineraryEditMode = true;
@@ -1511,7 +1607,7 @@ function initDragSort(card, di){
           newBtn.classList.add('editing');
           newBtn.innerHTML='<i class="fas fa-check"></i> 完成';
         }
-        showToast('↕️ 已重新排序', 'success', 1600);
+        showToast('↕️ 已重新排序（時間不變）', 'success', 2000);
       }
     }
     dragSrc = null;
@@ -1679,10 +1775,92 @@ function renderChecklist(){const el=document.getElementById('checklist-container
 function toggleCheck(i){checklist[i].done=!checklist[i].done;saveChecklist();renderChecklist();}
 function addCheckItem(){const inp=document.getElementById('new-check-item');const text=inp.value.trim();if(!text)return;checklist.push({text,done:false});saveChecklist();inp.value='';renderChecklist();}
 
-// ===== MEMOS =====
+// ===== LISTS =====
+let shopItems = JSON.parse(localStorage.getItem('osaka_shop')||'[]');
+
+function saveShopItems(){
+  safeSave('osaka_shop', shopItems);
+  fbWrite('shopItems', shopItems);
+}
+
 function showList(tab,btn){
-  switchTab('list',['check','memo'],tab,btn,'#page-lists');
+  switchTab('list',['check','shopping','memo'],tab,btn,'#page-lists');
   if(tab==='memo') renderMemos();
+  if(tab==='shopping') renderShopList();
+}
+
+function addShopItem(){
+  const item   = document.getElementById('shop-item').value.trim();
+  const forWho = document.getElementById('shop-for').value.trim();
+  const note   = document.getElementById('shop-note').value.trim();
+  if(!item){ showToast('⚠️ 請填寫商品名稱','warn'); return; }
+  shopItems.push({ id:Date.now(), item, forWho, note, bought:false });
+  saveShopItems();
+  document.getElementById('shop-item').value='';
+  document.getElementById('shop-for').value='';
+  document.getElementById('shop-note').value='';
+  renderShopList();
+  showToast('🛍️ 已加入購物清單');
+}
+
+function toggleBought(id){
+  const s = shopItems.find(x=>x.id===id);
+  if(s){ s.bought=!s.bought; saveShopItems(); renderShopList(); }
+}
+
+function deleteShopItem(id){
+  showConfirm('確定刪除這個購物項目？', ()=>{
+    shopItems = shopItems.filter(x=>x.id!==id);
+    saveShopItems();
+    renderShopList();
+  });
+}
+
+function renderShopList(){
+  const container = document.getElementById('shop-list-container');
+  const empty     = document.getElementById('shop-empty');
+  if(!container) return;
+
+  const searchEl = document.getElementById('shop-search');
+  const q = searchEl ? searchEl.value.trim().toLowerCase() : '';
+
+  const filtered = q
+    ? shopItems.filter(s =>
+        s.item.toLowerCase().includes(q) ||
+        (s.forWho && s.forWho.toLowerCase().includes(q)) ||
+        (s.note && s.note.toLowerCase().includes(q))
+      )
+    : shopItems;
+
+  if(filtered.length===0){
+    container.innerHTML='';
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+
+  const pending = filtered.filter(s=>!s.bought);
+  const bought  = filtered.filter(s=>s.bought);
+
+  const makeRow = (s, dim) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed rgba(255,183,197,.35);${dim?'opacity:.45':''}">
+      <input type="checkbox" class="custom-check" onchange="toggleBought(${s.id})" ${s.bought?'checked':''}>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.85rem;font-weight:700;color:var(--text);${s.bought?'text-decoration:line-through':''}">${escH(s.item)}</div>
+        <div style="display:flex;gap:5px;margin-top:3px;flex-wrap:wrap;align-items:center">
+          ${s.forWho?`<span style="font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:10px;background:var(--mint);color:#1a5c43">👤 ${escH(s.forWho)}</span>`:''}
+          ${s.note?`<span style="font-size:.65rem;color:var(--text-s)">${escH(s.note)}</span>`:''}
+        </div>
+      </div>
+      <button onclick="deleteShopItem(${s.id})" style="background:none;border:none;color:#e0c0c8;font-size:.8rem;cursor:pointer;padding:4px;flex-shrink:0">✕</button>
+    </div>`;
+
+  let html = pending.map(s=>makeRow(s,false)).join('');
+  if(bought.length){
+    html += `<div style="font-size:.68rem;color:var(--text-s);margin:10px 0 4px;font-weight:700;letter-spacing:.05em">✅ 已購買</div>`;
+    html += bought.map(s=>makeRow(s,true)).join('');
+  }
+  container.innerHTML = html;
 }
 function addMemo(){const inp=document.getElementById('memo-input');const text=inp.value.trim();if(!text)return;memos.push({id:Date.now(),text});saveMemos();inp.value='';renderMemos();}
 function deleteMemo(id){memos=memos.filter(m=>m.id!==id);saveMemos();renderMemos();}
@@ -1843,6 +2021,21 @@ function compressImage(file,maxW,maxH,quality,callback){
   reader.readAsDataURL(file);
 }
 
+// ===== COLLAPSIBLE HERO =====
+(function(){
+  const content  = document.getElementById('main-content');
+  const heroBg   = document.querySelector('.hero-bg');
+  const THRESHOLD = 40; // px scrolled before collapsing
+
+  content.addEventListener('scroll', ()=>{
+    if(content.scrollTop > THRESHOLD){
+      heroBg.classList.add('collapsed');
+    } else {
+      heroBg.classList.remove('collapsed');
+    }
+  }, {passive:true});
+})();
+
 // ===== INIT =====
 // Expose render functions so Firebase listeners can call them
 window.renderDay        = renderDay;
@@ -1850,6 +2043,8 @@ window.renderExpenseList= renderExpenseList;
 window.renderSummary    = renderSummary;
 window.renderChecklist  = renderChecklist;
 window.renderMemos      = renderMemos;
+window.renderShopList   = renderShopList;
+window.shopItems        = shopItems;
 
 document.getElementById('rate-display').textContent=`¥1 ≈ NT$${jpyRate.toFixed(4)}`;
 document.getElementById('rate-time').textContent='點擊更新按鈕取得即時匯率';
