@@ -233,16 +233,35 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
 .day-card [contenteditable]:focus{outline:none}
 /* In edit mode: contenteditable becomes interactive */
 .day-card.edit-mode [contenteditable]{pointer-events:auto;user-select:text;-webkit-user-select:text;cursor:text}
-/* Delete & add buttons hidden in view mode */
+/* Delete, add, drag handle hidden in view mode */
 .day-card .ev-delete{display:none}
 .day-card .ev-add-btn{display:none}
 .day-card .edit-hint{display:none}
+.day-card .ev-drag{display:none}
 /* Show them in edit mode */
 .day-card.edit-mode .ev-delete{display:inline-flex}
 .day-card.edit-mode .ev-add-btn{display:flex}
 .day-card.edit-mode .edit-hint{display:flex}
+.day-card.edit-mode .ev-drag{display:flex}
 /* Dashed underlines only in edit mode */
 .day-card.edit-mode [contenteditable]:focus{border-bottom-color:var(--pink-d) !important}
+/* Drag handle */
+.ev-drag{
+  align-items:center;justify-content:center;
+  width:22px;flex-shrink:0;cursor:grab;
+  color:#d0b0b8;font-size:.9rem;padding:2px 0;touch-action:none;
+}
+.ev-drag:active{cursor:grabbing}
+/* Row being dragged */
+.ev-row-dragging{
+  opacity:.4;
+  background:var(--pink-l);
+  border-radius:10px;
+}
+/* Drop target highlight */
+.ev-row-over{
+  border-top:2px solid var(--pink-d) !important;
+}
 
 /* TOAST */
 #toast{
@@ -753,7 +772,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
           <a href="https://transit.yahoo.co.jp/" target="_blank" class="btn-lav" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-train"></i> 乘換案內</a>
           <a href="https://www.google.com/search?q=JPY+TWD+rate" target="_blank" class="btn-mint" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-yen-sign"></i> 即時匯率</a>
           <a href="https://www.usj.co.jp/web/ja/jp" target="_blank" class="btn-pink" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-star"></i> USJ官網</a>
-          <a href="https://www.nankai.co.jp/tc_railway/traffic/railmap.html" target="_blank" class="btn-lav" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-bus"></i> 南海電鐵</a>
+          <a href="https://www.southernkansai-expressway.co.jp/" target="_blank" class="btn-lav" style="font-size:.65rem;padding:6px 10px"><i class="fas fa-bus"></i> 南海電鐵</a>
         </div>
       </div>
     </div>
@@ -774,7 +793,7 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
       </div>
 
       <div class="card" style="padding:12px">
-        <div style="font-size:.8rem;font-weight:800;color:var(--pink-d);margin-bottom:10px">旅行相簿 💕</div>
+        <div style="font-size:.8rem;font-weight:800;color:var(--pink-d);margin-bottom:10px">我們的旅行相簿 💕</div>
 
         <!-- 先選天、再上傳 -->
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
@@ -874,6 +893,94 @@ h1,h2,h3,.font-title{font-family:'M PLUS Rounded 1c',sans-serif}
     </div>
   </div>
 </div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBMv0XrJUz4vEwXnKI7ZrS9bSJdVVUxCx0",
+  authDomain: "osaka2026-f58cc.firebaseapp.com",
+  databaseURL: "https://osaka2026-f58cc-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "osaka2026-f58cc",
+  storageBucket: "osaka2026-f58cc.firebasestorage.app",
+  messagingSenderId: "427233936181",
+  appId: "1:427233936181:web:e9370bb1ebb830d3b4c27c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+// ── Firebase write helpers ──
+function fbSet(path, value){
+  set(ref(db, path), value).catch(err=>{
+    console.warn('Firebase write failed:', err);
+  });
+}
+
+// ── Expose to global scope so the main (non-module) script can call them ──
+window._fbSet   = fbSet;
+window._fbOnValue = (path, cb) => onValue(ref(db, path), snap => cb(snap.val()));
+window._fbReady = true;
+
+// ── Start listeners ──
+// These fire immediately with current data, then again on any remote change.
+// Each listener updates the in-memory variable and re-renders the relevant UI.
+
+// Itinerary
+onValue(ref(db,'itinerary'), snap=>{
+  const val = snap.val();
+  if(!val) return;
+  try{
+    const parsed = typeof val === 'string' ? JSON.parse(val) : val;
+    parsed.forEach((day,i)=>{
+      if(!window.ITINERARY||!window.ITINERARY[i]) return;
+      if(day.title) window.ITINERARY[i].title = day.title;
+      if(day.sub)   window.ITINERARY[i].sub   = day.sub;
+      if(Array.isArray(day.events)) window.ITINERARY[i].events = day.events;
+    });
+    if(window.renderDay && window.currentDay) window.renderDay(window.currentDay);
+  }catch(e){}
+});
+
+// Expenses
+onValue(ref(db,'expenses'), snap=>{
+  const val = snap.val();
+  window.expenses = val ? (typeof val==='string'?JSON.parse(val):val) : [];
+  localStorage.setItem('osaka_expenses', JSON.stringify(window.expenses));
+  if(window.renderExpenseList) window.renderExpenseList();
+  if(window.renderSummary) window.renderSummary();
+});
+
+// Checklist
+onValue(ref(db,'checklist'), snap=>{
+  const val = snap.val();
+  if(!val) return;
+  window.checklist = typeof val==='string'?JSON.parse(val):val;
+  localStorage.setItem('osaka_checklist', JSON.stringify(window.checklist));
+  if(window.renderChecklist) window.renderChecklist();
+});
+
+// Memos
+onValue(ref(db,'memos'), snap=>{
+  const val = snap.val();
+  window.memos = val ? (typeof val==='string'?JSON.parse(val):val) : [];
+  localStorage.setItem('osaka_memos', JSON.stringify(window.memos));
+  if(window.renderMemos) window.renderMemos();
+});
+
+// Rate
+onValue(ref(db,'jpyRate'), snap=>{
+  const val = snap.val();
+  if(!val) return;
+  window.jpyRate = parseFloat(val);
+  localStorage.setItem('osaka_rate', val.toString());
+  const el = document.getElementById('rate-display');
+  if(el) el.textContent=`¥1 = NT$${window.jpyRate.toFixed(4)}`;
+});
+
+</script>
 
 <script>
 // ===== DATA =====
@@ -985,28 +1092,67 @@ let currentTicketTarget = '';
 let itineraryEditMode = false;
 let currentMemFilter = 'all';
 
+// Expose to window so Firebase module listeners can access & update them
+window.ITINERARY = ITINERARY;
+window.expenses = expenses;
+window.checklist = checklist;
+window.memos = memos;
+window.jpyRate = jpyRate;
+window.currentDay = currentDay;
+
 if(!checklist){
   checklist = DEFAULT_CHECKLIST.map(t=>({text:t,done:false}));
   saveChecklist();
 }
 
-// ===== STORAGE (with error handling) =====
+// ===== STORAGE (localStorage + Firebase) =====
 function safeSave(key, value){
   try{
     localStorage.setItem(key, JSON.stringify(value));
     return true;
   } catch(e){
-    // QuotaExceededError — storage full
     showToast('⚠️ 儲存空間不足，請先刪除一些舊照片', 'error', 4000);
     return false;
   }
 }
-function saveExpenses(){safeSave('osaka_expenses', expenses);}
-function saveChecklist(){safeSave('osaka_checklist', checklist);}
-function saveMemos(){safeSave('osaka_memos', memos);}
-function saveMemories(){safeSave('osaka_memories', memories);}
-function saveTickets(){safeSave('osaka_tickets', ticketImages);}
-function saveRate(){localStorage.setItem('osaka_rate', jpyRate.toString());}
+
+// Helper: write to Firebase if SDK is ready
+function fbWrite(path, value){
+  if(window._fbSet) window._fbSet(path, value);
+}
+
+function saveExpenses(){
+  safeSave('osaka_expenses', expenses);
+  window.expenses = expenses;
+  fbWrite('expenses', expenses);
+}
+function saveChecklist(){
+  safeSave('osaka_checklist', checklist);
+  window.checklist = checklist;
+  fbWrite('checklist', checklist);
+}
+function saveMemos(){
+  safeSave('osaka_memos', memos);
+  window.memos = memos;
+  fbWrite('memos', memos);
+}
+function saveMemories(){
+  // Photos stay local only (too large for Firebase free tier)
+  safeSave('osaka_memories', memories);
+}
+function saveTickets(){
+  // Tickets stay local only (large binary data)
+  safeSave('osaka_tickets', ticketImages);
+}
+function saveRate(){
+  localStorage.setItem('osaka_rate', jpyRate.toString());
+  window.jpyRate = jpyRate;
+  fbWrite('jpyRate', jpyRate);
+}
+function saveItinerary(){
+  localStorage.setItem('osaka_itinerary', JSON.stringify(ITINERARY));
+  fbWrite('itinerary', ITINERARY);
+}
 
 // ===== TOAST =====
 let _toastTimer = null;
@@ -1076,12 +1222,13 @@ function showPage(p){
 // ===== DAY ITINERARY =====
 function showDay(d,btn){
   currentDay=d;
+  window.currentDay=d;
   itineraryEditMode=false;
   document.querySelectorAll('#day-tabs .sub-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderDay(d);
 }
-function saveItinerary(){localStorage.setItem('osaka_itinerary',JSON.stringify(ITINERARY));}
+
 function addEvent(dayIdx){ITINERARY[dayIdx].events.push({time:'--:--',icon:'📌',name:'新增行程項目',detail:'',maps:''});saveItinerary();renderDay(dayIdx+1);}
 function deleteEvent(dayIdx,evIdx){
   showConfirm('確定刪除這個行程項目？', ()=>{
@@ -1172,7 +1319,7 @@ function renderDay(d){
   const hint=document.createElement('div');
   hint.className='edit-hint';
   hint.style.cssText='font-size:.6rem;color:var(--text-s);margin-bottom:8px;opacity:.65;align-items:center;gap:4px';
-  hint.innerHTML='<i class="fas fa-pen" style="font-size:.55rem"></i> 點擊任何文字可編輯，垃圾桶可刪除';
+  hint.innerHTML='<i class="fas fa-pen" style="font-size:.55rem"></i> 點擊文字可編輯・長按 ☰ 可拖曳排序・垃圾桶刪除';
 
   card.append(header,hint);
 
@@ -1180,7 +1327,15 @@ function renderDay(d){
   day.events.forEach((ev,i)=>{
     const isLast=i===day.events.length-1;
     const row=document.createElement('div');
+    row.className='ev-row';
+    row.dataset.idx=i;
     row.style.cssText=`display:flex;gap:8px;padding:8px 0;${!isLast?'border-bottom:1px dashed rgba(0,0,0,.06)':''}`;
+
+    // drag handle
+    const dragHandle=document.createElement('div');
+    dragHandle.className='ev-drag';
+    dragHandle.innerHTML='<i class="fas fa-grip-lines"></i>';
+    dragHandle.title='長按拖曳排序';
 
     // time badge
     const timeWrap=document.createElement('div');
@@ -1246,7 +1401,7 @@ function renderDay(d){
     delBtn.addEventListener('mouseout',()=>delBtn.style.color='#e0c0c8');
     delBtn.addEventListener('click',()=>deleteEvent(di,i));
 
-    row.append(timeWrap,iconEl,textBlock,delBtn);
+    row.append(dragHandle,timeWrap,iconEl,textBlock,delBtn);
     card.appendChild(row);
   });
 
@@ -1262,6 +1417,109 @@ function renderDay(d){
 
   container.innerHTML='';
   container.appendChild(card);
+
+  // ── initialise touch drag-to-reorder (only when edit mode active) ──
+  initDragSort(card, di);
+}
+
+// ===== TOUCH DRAG SORT =====
+function initDragSort(card, di){
+  let dragSrc = null;      // the row element being dragged
+  let ghost   = null;      // floating clone that follows finger
+  let startY  = 0;
+  let offsetY = 0;         // finger offset within the row
+
+  function getRows(){ return Array.from(card.querySelectorAll('.ev-row')); }
+
+  function onTouchStart(e){
+    // Only active in edit mode and only from the handle
+    if(!card.classList.contains('edit-mode')) return;
+    const handle = e.target.closest('.ev-drag');
+    if(!handle) return;
+
+    dragSrc = handle.closest('.ev-row');
+    if(!dragSrc) return;
+    e.preventDefault();
+
+    const touch = e.touches[0];
+    const rect  = dragSrc.getBoundingClientRect();
+    startY  = touch.clientY;
+    offsetY = touch.clientY - rect.top;
+
+    // Build ghost
+    ghost = dragSrc.cloneNode(true);
+    ghost.style.cssText=`
+      position:fixed;left:${rect.left}px;top:${rect.top}px;
+      width:${rect.width}px;z-index:300;pointer-events:none;
+      background:#fff;border-radius:12px;
+      box-shadow:0 8px 28px rgba(255,143,171,.35);
+      opacity:.92;transition:none;padding:8px;
+    `;
+    document.body.appendChild(ghost);
+    dragSrc.classList.add('ev-row-dragging');
+  }
+
+  function onTouchMove(e){
+    if(!dragSrc || !ghost) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const y = touch.clientY - offsetY;
+    ghost.style.top = y + 'px';
+
+    // Find row under finger
+    ghost.style.display='none';
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    ghost.style.display='';
+    const overRow = el ? el.closest('.ev-row') : null;
+
+    // Remove previous highlights
+    getRows().forEach(r=>r.classList.remove('ev-row-over'));
+    if(overRow && overRow !== dragSrc) overRow.classList.add('ev-row-over');
+  }
+
+  function onTouchEnd(e){
+    if(!dragSrc || !ghost) return;
+    const touch = e.changedTouches[0];
+
+    ghost.style.display='none';
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    ghost.style.display='';
+    const overRow = el ? el.closest('.ev-row') : null;
+
+    // Clean up visual states
+    ghost.remove(); ghost = null;
+    dragSrc.classList.remove('ev-row-dragging');
+    getRows().forEach(r=>r.classList.remove('ev-row-over'));
+
+    // Reorder if dropped on a different row
+    if(overRow && overRow !== dragSrc){
+      const srcIdx  = parseInt(dragSrc.dataset.idx);
+      const destIdx = parseInt(overRow.dataset.idx);
+      if(!isNaN(srcIdx) && !isNaN(destIdx) && srcIdx !== destIdx){
+        const events = ITINERARY[di].events;
+        const [moved] = events.splice(srcIdx, 1);
+        events.splice(destIdx, 0, moved);
+        saveItinerary();
+        // Re-render preserving edit mode
+        itineraryEditMode = true;
+        renderDay(di + 1);
+        // Re-apply edit mode after re-render
+        const newCard = document.querySelector('#day-content .day-card');
+        const newBtn  = document.getElementById('itinerary-edit-btn');
+        if(newCard && newBtn){
+          newCard.classList.add('edit-mode');
+          newBtn.classList.add('editing');
+          newBtn.innerHTML='<i class="fas fa-check"></i> 完成';
+        }
+        showToast('↕️ 已重新排序', 'success', 1600);
+      }
+    }
+    dragSrc = null;
+  }
+
+  card.addEventListener('touchstart', onTouchStart, {passive:false});
+  card.addEventListener('touchmove',  onTouchMove,  {passive:false});
+  card.addEventListener('touchend',   onTouchEnd,   {passive:false});
 }
 
 (function(){
@@ -1586,6 +1844,13 @@ function compressImage(file,maxW,maxH,quality,callback){
 }
 
 // ===== INIT =====
+// Expose render functions so Firebase listeners can call them
+window.renderDay        = renderDay;
+window.renderExpenseList= renderExpenseList;
+window.renderSummary    = renderSummary;
+window.renderChecklist  = renderChecklist;
+window.renderMemos      = renderMemos;
+
 document.getElementById('rate-display').textContent=`¥1 ≈ NT$${jpyRate.toFixed(4)}`;
 document.getElementById('rate-time').textContent='點擊更新按鈕取得即時匯率';
 fetchRate();
@@ -1595,8 +1860,10 @@ renderMemos();
 renderMemories();
 renderExpenseList();
 renderSummary();
-// Restore saved tickets on load
-['xin-ticket','xin-express','song-ticket','song-express'].forEach(k=>{if(ticketImages[k]){}});
+// Restore saved tickets on load (local only)
+['xin-ticket','xin-express','song-ticket','song-express'].forEach(k=>{
+  if(ticketImages[k]) restoreTicketZone(k);
+});
 </script>
 </body>
 </html>
